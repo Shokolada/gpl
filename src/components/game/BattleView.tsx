@@ -371,6 +371,7 @@ export default function BattleView({ arena: initialArena }: BattleViewProps) {
                 secondaryColor={opponentSide.secondaryColor}
                 label={opponentSide.name}
                 className="w-full"
+                clipPolygon={opponentSide.clipPolygon}
               />
               {/* Capture overlay text */}
               {playerCapturePercent > 0 && (
@@ -423,6 +424,7 @@ export default function BattleView({ arena: initialArena }: BattleViewProps) {
                 secondaryColor={playerSide.secondaryColor}
                 label={playerSide.name}
                 className="w-full"
+                clipPolygon={playerSide.clipPolygon}
               />
             </div>
             {/* Flag intact label */}

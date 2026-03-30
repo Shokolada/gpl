@@ -9,6 +9,7 @@ interface PixelCanvasProps {
   secondaryColor: string;
   label: string;
   className?: string;
+  clipPolygon?: string;
 }
 
 /**
@@ -58,6 +59,7 @@ export default function PixelCanvas({
   secondaryColor,
   label,
   className,
+  clipPolygon,
 }: PixelCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -165,12 +167,16 @@ export default function PixelCanvas({
 
   return (
     <div ref={containerRef} className={className}>
-      <canvas
-        ref={canvasRef}
-        className="w-full"
-        style={{ imageRendering: "pixelated" }}
-      />
-      <div className="mt-2 text-center">
+      <div
+        style={clipPolygon ? { clipPath: `polygon(${clipPolygon})` } : undefined}
+      >
+        <canvas
+          ref={canvasRef}
+          className="w-full"
+          style={{ imageRendering: "pixelated" }}
+        />
+      </div>
+      <div className="mt-1 text-center">
         <p className="text-sm font-bold tracking-wide">{label}</p>
         <p className="text-xs text-gray-400">{percentage}%</p>
       </div>
