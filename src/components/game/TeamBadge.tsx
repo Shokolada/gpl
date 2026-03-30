@@ -5,19 +5,39 @@ interface TeamBadgeProps {
 
 export default function TeamBadge({ teamName, teamColor }: TeamBadgeProps) {
   return (
-    <div className="flex items-center gap-2">
-      <div
-        className="w-4 h-4 rounded-full border-2 border-white/30 shadow-[0_0_8px_var(--badge-color)]"
-        style={
-          {
-            backgroundColor: teamColor,
-            "--badge-color": `${teamColor}66`,
-          } as React.CSSProperties
-        }
-      />
-      <span className="text-sm font-bold text-white tracking-wide">
-        {teamName}
+    <div
+      className="flex flex-col items-center gap-1.5 rounded-lg px-3 py-2"
+      style={{
+        backgroundColor: "#1e2128",
+        borderTop: "2px solid #4a4f5a",
+        borderLeft: "2px solid #4a4f5a",
+        borderBottom: "2px solid #15181e",
+        borderRight: "2px solid #15181e",
+      }}
+    >
+      {/* TEAM label */}
+      <span
+        className="text-[8px] font-[family-name:var(--font-orbitron)] font-medium uppercase tracking-[0.2em]"
+        style={{ color: "#6b7280" }}
+      >
+        TEAM
       </span>
+
+      <div className="flex items-center gap-2">
+        {/* Team color circle — no glow */}
+        <div
+          className="w-4 h-4 rounded-full border-2"
+          style={{
+            backgroundColor: teamColor,
+            borderColor: "rgba(255, 255, 255, 0.2)",
+          }}
+        />
+
+        {/* Team name */}
+        <span className="text-sm font-bold text-white tracking-wide">
+          {teamName}
+        </span>
+      </div>
     </div>
   );
 }

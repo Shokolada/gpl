@@ -2,372 +2,290 @@
 
 import { useMemo } from "react";
 
+// ─── Types ───────────────────────────────────────────────────────────────────
+
 interface BombStopwatchProps {
   time: number;
   isRunning: boolean;
 }
 
-type TimerZone = "calm" | "bright" | "gold" | "green" | "red";
+type Zone = "safe" | "warning" | "red";
 
 interface VisualState {
-  zone: TimerZone;
-  textColor: string;
-  textShadow: string;
-  glowClass: string;
-  ringColor: string;
-  ringGlow: string;
-  progress: number; // 0-1, how close to 10.000
+  zone: Zone;
+  progress: number;
   formattedTime: string;
 }
 
-function computeVisualState(time: number): VisualState {
-  const seconds = Math.floor(time);
-  const ms = Math.floor((time - seconds) * 1000);
-  const formattedTime = `${seconds.toString().padStart(2, "0")}.${ms.toString().padStart(3, "0")}`;
+// ─── Helpers ─────────────────────────────────────────────────────────────────
 
-  // Progress ring: fills from 0 to 1 as time goes 0 -> 10
+function computeVisualState(time: number): VisualState {
   const progress = Math.min(time / 10, 1);
 
-  if (time < 9.0) {
-    return {
-      zone: "calm",
-      textColor: "text-gray-300",
-      textShadow: "0 0 10px rgba(200, 200, 220, 0.15)",
-      glowClass: "",
-      ringColor: "#6b7280",
-      ringGlow: "none",
-      progress,
-      formattedTime,
-    };
-  }
+  let zone: Zone = "safe";
+  if (time > 10.05) zone = "red";
+  else if (time > 9.0) zone = "warning";
 
-  if (time < 9.5) {
-    return {
-      zone: "bright",
-      textColor: "text-white",
-      textShadow: "0 0 15px rgba(255, 255, 255, 0.3)",
-      glowClass: "",
-      ringColor: "#ffffff",
-      ringGlow: "0 0 8px rgba(255, 255, 255, 0.3)",
-      progress,
-      formattedTime,
-    };
-  }
+  const seconds = Math.floor(time);
+  const ms = Math.floor((time - seconds) * 1000);
+  const formattedTime = `${String(seconds).padStart(2, "0")}.${String(ms).padStart(3, "0")}`;
 
-  if (time < 9.95) {
-    // Gold zone - increasing intensity
-    const intensity = (time - 9.5) / 0.45; // 0 to 1 within this range
-    return {
-      zone: "gold",
-      textColor: "text-[#ffd700]",
-      textShadow: `0 0 ${15 + intensity * 25}px rgba(255, 215, 0, ${0.4 + intensity * 0.4}), 0 0 ${30 + intensity * 40}px rgba(255, 215, 0, ${0.2 + intensity * 0.2})`,
-      glowClass: "",
-      ringColor: "#ffd700",
-      ringGlow: `0 0 ${6 + intensity * 12}px rgba(255, 215, 0, ${0.3 + intensity * 0.4})`,
-      progress,
-      formattedTime,
-    };
-  }
-
-  if (time <= 10.05) {
-    return {
-      zone: "green",
-      textColor: "text-[#00ff88]",
-      textShadow: "unused", // handled by CSS class
-      glowClass: "animate-green-glow-pulse",
-      ringColor: "#00ff88",
-      ringGlow: "0 0 20px rgba(0, 255, 136, 0.6)",
-      progress,
-      formattedTime,
-    };
-  }
-
-  return {
-    zone: "red",
-    textColor: "text-[#ff2d55]",
-    textShadow: "0 0 25px rgba(255, 45, 85, 0.7), 0 0 50px rgba(255, 45, 85, 0.3)",
-    glowClass: "animate-shake",
-    ringColor: "#ff2d55",
-    ringGlow: "0 0 15px rgba(255, 45, 85, 0.5)",
-    progress,
-    formattedTime,
-  };
+  return { zone, progress, formattedTime };
 }
+
+// ─── Inline Keyframes ────────────────────────────────────────────────────────
+
+const keyframesCSS = `
+@keyframes bomb-shake {
+  0%, 100% { transform: translateX(0); }
+  10% { transform: translateX(-3px) rotate(-1deg); }
+  20% { transform: translateX(3px) rotate(1deg); }
+  30% { transform: translateX(-3px) rotate(-0.5deg); }
+  40% { transform: translateX(3px) rotate(0.5deg); }
+  50% { transform: translateX(-2px) rotate(-0.5deg); }
+  60% { transform: translateX(2px) rotate(0.5deg); }
+  70% { transform: translateX(-1px); }
+  80% { transform: translateX(1px); }
+  90% { transform: translateX(-1px); }
+}
+
+@keyframes digit-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.82; }
+}
+
+@keyframes spark-flicker {
+  0%, 100% { opacity: 1; transform: scale(1) translate(0, 0); }
+  15% { opacity: 0.5; transform: scale(0.7) translate(1px, -1px); }
+  30% { opacity: 1; transform: scale(1.3) translate(-1px, 0); }
+  50% { opacity: 0.6; transform: scale(0.85) translate(0, 1px); }
+  70% { opacity: 1; transform: scale(1.15) translate(1px, -1px); }
+  85% { opacity: 0.7; transform: scale(0.9) translate(-1px, 0); }
+}
+
+@keyframes fuse-ember {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+`;
+
+// ─── Bomb SVG ────────────────────────────────────────────────────────────────
+
+function BombSVG({ isRunning }: { isRunning: boolean }) {
+  return (
+    <svg
+      viewBox="0 0 200 200"
+      className="w-[110px] h-[110px] md:w-[140px] md:h-[140px]"
+      style={{ position: "relative", zIndex: 2 }}
+      aria-hidden="true"
+    >
+      <defs>
+        {/* 3D sphere gradient for bomb body */}
+        <radialGradient id="bsw-bombBody" cx="38%" cy="32%" r="55%">
+          <stop offset="0%" stopColor="#4a4a4a" />
+          <stop offset="25%" stopColor="#2e2e2e" />
+          <stop offset="60%" stopColor="#1a1a1a" />
+          <stop offset="100%" stopColor="#080808" />
+        </radialGradient>
+
+        {/* Specular highlight on sphere */}
+        <radialGradient id="bsw-bombHL" cx="32%" cy="28%" r="22%">
+          <stop offset="0%" stopColor="rgba(255,255,255,0.18)" />
+          <stop offset="100%" stopColor="rgba(255,255,255,0)" />
+        </radialGradient>
+
+        {/* Metallic cap */}
+        <linearGradient id="bsw-capGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#999999" />
+          <stop offset="35%" stopColor="#6e6e6e" />
+          <stop offset="70%" stopColor="#4a4a4a" />
+          <stop offset="100%" stopColor="#3a3a3a" />
+        </linearGradient>
+
+        {/* Spark radial gradient */}
+        <radialGradient id="bsw-sparkGrad" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#ffffff" />
+          <stop offset="25%" stopColor="#ffee00" />
+          <stop offset="55%" stopColor="#ffaa00" />
+          <stop offset="100%" stopColor="#ff4400" stopOpacity="0" />
+        </radialGradient>
+      </defs>
+
+      {/* --- Fuse (curved line from cap to tip) --- */}
+      <path
+        d="M 100 58 Q 106 38, 128 28 Q 150 18, 158 8"
+        fill="none"
+        stroke={isRunning ? "#5c4a3a" : "#4a4a4a"}
+        strokeWidth="3.5"
+        strokeLinecap="round"
+        style={isRunning ? { animation: "fuse-ember 0.3s ease-in-out infinite" } : undefined}
+      />
+
+      {/* --- Spark at fuse tip --- */}
+      {isRunning ? (
+        <g style={{ animation: "spark-flicker 0.18s ease-in-out infinite" }}>
+          {/* Outer glow halo */}
+          <circle cx="158" cy="8" r="12" fill="url(#bsw-sparkGrad)" opacity={0.35} />
+          {/* Mid flame */}
+          <circle cx="158" cy="8" r="6" fill="url(#bsw-sparkGrad)" />
+          {/* White-hot core */}
+          <circle cx="158" cy="8" r="2.5" fill="#ffffff" />
+        </g>
+      ) : (
+        <circle cx="158" cy="8" r="3" fill="#5a5a5a" />
+      )}
+
+      {/* --- Metallic collar / cap --- */}
+      <rect
+        x="87"
+        y="54"
+        width="26"
+        height="14"
+        rx="3"
+        fill="url(#bsw-capGrad)"
+        stroke="#5a5a5a"
+        strokeWidth="0.6"
+      />
+      {/* Ridge details on cap */}
+      <line x1="90" y1="58" x2="110" y2="58" stroke="#8a8a8a" strokeWidth="0.5" opacity={0.4} />
+      <line x1="90" y1="62" x2="110" y2="62" stroke="#8a8a8a" strokeWidth="0.5" opacity={0.4} />
+
+      {/* --- Bomb body (circle sphere) --- */}
+      <circle cx="100" cy="130" r="64" fill="url(#bsw-bombBody)" />
+      {/* Highlight overlay */}
+      <circle cx="100" cy="130" r="64" fill="url(#bsw-bombHL)" />
+      {/* Subtle edge definition */}
+      <circle cx="100" cy="130" r="64" fill="none" stroke="#222222" strokeWidth="1" />
+    </svg>
+  );
+}
+
+// ─── Main Component ──────────────────────────────────────────────────────────
 
 export default function BombStopwatch({ time, isRunning }: BombStopwatchProps) {
   const vs = useMemo(() => computeVisualState(time), [time]);
 
-  // SVG circle math for progress ring
-  const circleRadius = 130;
-  const circleCircumference = 2 * Math.PI * circleRadius;
-  const strokeDashoffset = circleCircumference * (1 - vs.progress);
+  const isShaking = vs.zone === "red";
 
   return (
-    <div className="flex flex-col items-center gap-6 relative">
-      {/* ---- Floating background particles (CSS-only) ---- */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
-        <div
-          className="absolute w-1 h-1 rounded-full bg-[#00f0ff]/30"
-          style={{ top: "15%", left: "10%", animation: "float-particle-1 6s ease-in-out infinite" }}
-        />
-        <div
-          className="absolute w-0.5 h-0.5 rounded-full bg-[#00f0ff]/20"
-          style={{ top: "60%", left: "85%", animation: "float-particle-2 8s ease-in-out infinite 1s" }}
-        />
-        <div
-          className="absolute w-1 h-1 rounded-full bg-[#ffd700]/20"
-          style={{ top: "80%", left: "25%", animation: "float-particle-3 7s ease-in-out infinite 0.5s" }}
-        />
-        <div
-          className="absolute w-0.5 h-0.5 rounded-full bg-[#00ff88]/25"
-          style={{ top: "25%", left: "75%", animation: "float-particle-1 9s ease-in-out infinite 2s" }}
-        />
-        <div
-          className="absolute w-1 h-1 rounded-full bg-[#ff2d55]/15"
-          style={{ top: "45%", left: "50%", animation: "float-particle-2 5s ease-in-out infinite 3s" }}
-        />
-        <div
-          className="absolute w-0.5 h-0.5 rounded-full bg-[#00f0ff]/20"
-          style={{ top: "70%", left: "65%", animation: "float-particle-3 10s ease-in-out infinite 1.5s" }}
-        />
-      </div>
+    <>
+      <style>{keyframesCSS}</style>
 
-      {/* ---- Main container with rotating border ---- */}
-      <div className="relative">
-        {/* Outer rotating gradient border */}
-        <div className="absolute -inset-[2px] rounded-full overflow-hidden" aria-hidden="true">
-          <div
-            className="w-full h-full animate-rotate-border"
-            style={{
-              background: `conic-gradient(from 0deg, #00f0ff, #3b82f6, #8b5cf6, #ff2d55, #ffd700, #00ff88, #00f0ff)`,
-              opacity: isRunning ? 0.7 : 0.25,
-              transition: "opacity 0.5s ease",
-            }}
-          />
+      <div
+        className="flex flex-col items-center justify-center select-none"
+        style={
+          isShaking
+            ? {
+                animation: "bomb-shake 0.4s ease-in-out infinite",
+              }
+            : undefined
+        }
+      >
+        {/* Bomb graphic — overlaps the top of the circular display */}
+        <div className="relative" style={{ marginBottom: "-50px", zIndex: 2 }}>
+          <BombSVG isRunning={isRunning} />
         </div>
 
-        {/* Inner container: dark glass circle */}
+        {/* ---- Circular LED Display ---- */}
         <div
-          className="relative w-[300px] h-[300px] md:w-[360px] md:h-[360px] rounded-full flex flex-col items-center justify-center overflow-hidden"
-          style={{
-            background: `radial-gradient(circle at 30% 30%, rgba(15, 23, 42, 0.9), rgba(5, 5, 16, 0.98))`,
-            boxShadow: `inset 0 2px 0 rgba(255, 255, 255, 0.04), inset 0 -2px 4px rgba(0, 0, 0, 0.5), 0 0 60px rgba(0, 0, 0, 0.6)`,
-          }}
+          className="relative w-[280px] h-[280px] md:w-[360px] md:h-[360px]"
+          style={{ zIndex: 1 }}
         >
-          {/* Glass highlight */}
+          {/* Outer beveled metallic rim */}
           <div
-            className="absolute top-0 left-0 w-full h-1/2 rounded-t-full pointer-events-none"
+            className="absolute inset-0 rounded-full"
             style={{
-              background: "linear-gradient(to bottom, rgba(255,255,255,0.03), transparent)",
+              background: `linear-gradient(135deg, #4a4f5a 0%, #3a3e48 30%, #2a2d35 50%, #1e2128 70%, #15181e 100%)`,
+              boxShadow: `
+                0 2px 8px rgba(0,0,0,0.6),
+                inset 0 1px 0 rgba(255,255,255,0.06)
+              `,
             }}
-          />
-
-          {/* SVG Progress Ring + Bomb */}
-          <svg
-            className="absolute inset-0 w-full h-full"
-            viewBox="0 0 300 300"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
           >
-            {/* Track ring (background) */}
-            <circle
-              cx="150"
-              cy="150"
-              r={circleRadius}
-              stroke="rgba(255,255,255,0.05)"
-              strokeWidth="3"
-              fill="none"
-            />
-            {/* Progress ring */}
-            <circle
-              cx="150"
-              cy="150"
-              r={circleRadius}
-              stroke={vs.ringColor}
-              strokeWidth="3"
-              fill="none"
-              strokeLinecap="round"
-              strokeDasharray={circleCircumference}
-              strokeDashoffset={strokeDashoffset}
-              transform="rotate(-90 150 150)"
-              style={{
-                transition: "stroke-dashoffset 0.1s linear, stroke 0.3s ease",
-                filter: vs.ringGlow !== "none" ? `drop-shadow(${vs.ringGlow})` : undefined,
-              }}
-            />
-
-            {/* ---- Bomb SVG ---- */}
-            <g transform="translate(115, 42)">
-              {/* Bomb body - sleek rounded rectangle with metallic gradient */}
-              <defs>
-                <radialGradient id="bombBody" cx="0.4" cy="0.35" r="0.65">
-                  <stop offset="0%" stopColor="#1e293b" />
-                  <stop offset="60%" stopColor="#0f172a" />
-                  <stop offset="100%" stopColor="#020617" />
-                </radialGradient>
-                <linearGradient id="bombSheen" x1="0" y1="0" x2="0.6" y2="1">
-                  <stop offset="0%" stopColor="rgba(255,255,255,0.08)" />
-                  <stop offset="100%" stopColor="rgba(255,255,255,0)" />
-                </linearGradient>
-                <linearGradient id="fuseGrad" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%" stopColor="#475569" />
-                  <stop offset="100%" stopColor="#334155" />
-                </linearGradient>
-                {isRunning && (
-                  <linearGradient id="sparkGrad" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%" stopColor="#ffd700" />
-                    <stop offset="50%" stopColor="#ff8c00" />
-                    <stop offset="100%" stopColor="#ff2d55" />
-                  </linearGradient>
-                )}
-              </defs>
-
-              {/* Bomb body silhouette */}
-              <ellipse
-                cx="35"
-                cy="48"
-                rx="28"
-                ry="30"
-                fill="url(#bombBody)"
-                stroke="#334155"
-                strokeWidth="1.5"
-              />
-              {/* Metallic sheen */}
-              <ellipse
-                cx="35"
-                cy="48"
-                rx="28"
-                ry="30"
-                fill="url(#bombSheen)"
-              />
-              {/* Highlight reflection */}
-              <ellipse
-                cx="24"
-                cy="38"
-                rx="8"
-                ry="5"
-                fill="rgba(255,255,255,0.06)"
-                transform="rotate(-25 24 38)"
-              />
-
-              {/* Bomb cap / collar */}
-              <rect
-                x="27"
-                y="16"
-                width="16"
-                height="8"
-                rx="3"
-                fill="#334155"
-                stroke="#475569"
-                strokeWidth="1"
-              />
-
-              {/* Fuse path */}
-              <path
-                d="M43 16 C46 10, 52 12, 54 6 C56 0, 62 3, 66 -2"
-                stroke="url(#fuseGrad)"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                fill="none"
-              />
-
-              {/* Animated fuse glow when running */}
-              {isRunning && (
-                <path
-                  d="M43 16 C46 10, 52 12, 54 6 C56 0, 62 3, 66 -2"
-                  stroke="#ffd700"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  fill="none"
-                  strokeDasharray="8 32"
-                  style={{
-                    animation: "fuse-glow 0.8s linear infinite",
-                    filter: "drop-shadow(0 0 4px rgba(255, 215, 0, 0.8))",
-                  }}
-                />
-              )}
-
-              {/* Spark at end of fuse */}
-              {isRunning && (
-                <g>
-                  {/* Outer glow */}
-                  <circle
-                    cx="66"
-                    cy="-2"
-                    r="6"
-                    fill="rgba(255, 200, 0, 0.3)"
-                    className="animate-pulse"
-                  />
-                  {/* Bright core */}
-                  <circle
-                    cx="66"
-                    cy="-2"
-                    r="3.5"
-                    fill="#ffd700"
-                    style={{
-                      filter: "drop-shadow(0 0 6px rgba(255, 215, 0, 0.9))",
-                    }}
-                  />
-                  <circle cx="66" cy="-2" r="1.8" fill="#fff8e1" />
-                  {/* Mini sparks */}
-                  <circle cx="63" cy="-5" r="1" fill="#ffa000" opacity="0.7" className="animate-pulse" />
-                  <circle cx="69" cy="0" r="0.8" fill="#ff6f00" opacity="0.6" className="animate-pulse" />
-                </g>
-              )}
-
-              {/* Inactive fuse tip (when stopped) */}
-              {!isRunning && (
-                <circle cx="66" cy="-2" r="2" fill="#475569" />
-              )}
-
-              {/* Running glow around bomb body */}
-              {isRunning && (
-                <ellipse
-                  cx="35"
-                  cy="48"
-                  rx="32"
-                  ry="34"
-                  fill="none"
-                  stroke="rgba(255, 215, 0, 0.1)"
-                  strokeWidth="4"
-                  className="animate-pulse"
-                />
-              )}
-            </g>
-          </svg>
-
-          {/* Timer display - overlaid on top of SVG */}
-          <div className="relative z-10 flex flex-col items-center mt-16 md:mt-20">
+            {/* Second bevel ring for depth */}
             <div
-              className={`
-                font-[family-name:var(--font-jetbrains)] font-extrabold tracking-wider
-                text-6xl md:text-8xl tabular-nums
-                ${vs.textColor}
-                ${vs.glowClass}
-                ${isRunning && vs.zone !== "green" && vs.zone !== "red" ? "animate-digit-pulse" : ""}
-                transition-colors duration-150
-              `}
+              className="absolute inset-[6px] md:inset-[8px] rounded-full"
               style={{
-                textShadow: vs.zone !== "green" ? vs.textShadow : undefined,
+                background: `linear-gradient(315deg, #4a4f5a 0%, #2a2d35 35%, #1e2128 65%, #15181e 100%)`,
               }}
             >
-              {vs.formattedTime}
-            </div>
-
-            {/* TARGET display */}
-            <div className="mt-3 md:mt-4">
-              <span
-                className="font-[family-name:var(--font-orbitron)] text-xs md:text-sm tracking-[0.25em] uppercase text-[#00f0ff]/70"
+              {/* Inner dark LED surface */}
+              <div
+                className="absolute inset-[5px] md:inset-[6px] rounded-full flex flex-col items-center justify-center"
                 style={{
-                  textShadow: "0 0 8px rgba(0, 240, 255, 0.2)",
+                  backgroundColor: "#0a0c10",
+                  boxShadow: `inset 0 2px 12px rgba(0,0,0,0.8), inset 0 -1px 6px rgba(0,0,0,0.4)`,
                 }}
               >
-                TARGET: 10.000
-              </span>
+                {/* STOPWATCH label */}
+                <div
+                  className="text-[9px] md:text-[11px] tracking-[0.3em] uppercase mb-4 md:mb-5"
+                  style={{
+                    color: "#6b7280",
+                    fontFamily: "var(--font-orbitron, 'Orbitron'), 'JetBrains Mono', monospace",
+                    letterSpacing: "0.3em",
+                  }}
+                >
+                  STOPWATCH
+                </div>
+
+                {/* Timer digits container */}
+                <div className="relative">
+                  {/* Ghost segments — simulates unlit LED segments */}
+                  <div
+                    className="text-[44px] md:text-[58px] leading-none tabular-nums"
+                    style={{
+                      fontFamily:
+                        "var(--font-jetbrains, 'JetBrains Mono'), 'Courier New', monospace",
+                      fontWeight: 700,
+                      color: "#ff0000",
+                      opacity: 0.06,
+                      userSelect: "none",
+                      letterSpacing: "2px",
+                    }}
+                    aria-hidden="true"
+                  >
+                    88.888
+                  </div>
+
+                  {/* Active LED digits — always red */}
+                  <div
+                    className="absolute inset-0 text-[44px] md:text-[58px] leading-none tabular-nums"
+                    style={{
+                      fontFamily:
+                        "var(--font-jetbrains, 'JetBrains Mono'), 'Courier New', monospace",
+                      fontWeight: 700,
+                      color: "#ff0000",
+                      textShadow:
+                        "0 0 10px rgba(255,0,0,0.5), 0 0 25px rgba(255,0,0,0.15)",
+                      letterSpacing: "2px",
+                      ...(isRunning
+                        ? {
+                            animation: "digit-pulse 1.4s ease-in-out infinite",
+                          }
+                        : {}),
+                    }}
+                  >
+                    {vs.formattedTime}
+                  </div>
+                </div>
+
+                {/* TARGET label */}
+                <div
+                  className="text-[9px] md:text-[11px] tracking-[0.2em] uppercase mt-4 md:mt-5"
+                  style={{
+                    color: "#6b7280",
+                    fontFamily: "var(--font-orbitron, 'Orbitron'), 'JetBrains Mono', monospace",
+                    letterSpacing: "0.2em",
+                  }}
+                >
+                  TARGET: 10.000
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

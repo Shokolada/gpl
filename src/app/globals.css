@@ -5,16 +5,28 @@
   --font-display: var(--font-orbitron), ui-monospace, monospace;
   --font-mono: var(--font-jetbrains), ui-monospace, monospace;
 
-  --color-background: #050510;
-  --color-surface: #0a0f1e;
-  --color-surface-2: #111827;
-  --color-foreground: #f0f0f5;
+  --color-background: #2a2d35;
+  --color-surface: #1e2128;
+  --color-surface-2: #252830;
+  --color-foreground: #ffffff;
 
-  --color-neon-cyan: #00f0ff;
-  --color-hot-red: #ff2d55;
-  --color-electric-gold: #ffd700;
-  --color-neon-green: #00ff88;
-  --color-neon-purple: #a855f7;
+  --color-border-light: #4a4f5a;
+  --color-border-dark: #15181e;
+  --color-led-bg: #0a0c10;
+  --color-led-red: #ff0000;
+
+  --color-mil-red: #cc0000;
+  --color-mil-green: #009933;
+  --color-mil-blue: #0066cc;
+  --color-mil-gold: #ffcc00;
+  --color-muted: #6b7280;
+
+  /* Legacy aliases used by game components */
+  --color-hot-red: #cc0000;
+  --color-electric-gold: #ffcc00;
+  --color-neon-green: #009933;
+  --color-neon-cyan: #4a4f5a;
+  --color-neon-purple: #6b7280;
 
   --color-border: rgba(255, 255, 255, 0.08);
   --color-border-hover: rgba(255, 255, 255, 0.15);
@@ -27,8 +39,8 @@
 }
 
 ::selection {
-  background: var(--color-neon-cyan);
-  color: #050510;
+  background: var(--color-mil-gold);
+  color: #1e2128;
 }
 
 body {
@@ -39,33 +51,29 @@ body {
   overflow-x: hidden;
 }
 
-/* Animated gradient background */
+/* Crosshatch background pattern */
 body::before {
   content: '';
   position: fixed;
   inset: 0;
   z-index: -2;
+  opacity: 0.04;
   background:
-    radial-gradient(ellipse 80% 60% at 50% -20%, rgba(0, 240, 255, 0.06) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 40% at 80% 80%, rgba(168, 85, 247, 0.04) 0%, transparent 50%),
-    radial-gradient(ellipse 60% 40% at 20% 90%, rgba(255, 45, 85, 0.03) 0%, transparent 50%),
-    var(--color-background);
-}
-
-/* Scan-line overlay */
-body::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 10px,
+      rgba(255, 255, 255, 0.5) 10px,
+      rgba(255, 255, 255, 0.5) 11px
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 10px,
+      rgba(255, 255, 255, 0.5) 10px,
+      rgba(255, 255, 255, 0.5) 11px
+    );
   pointer-events: none;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 2px,
-    rgba(0, 0, 0, 0.03) 2px,
-    rgba(0, 0, 0, 0.03) 4px
-  );
 }
 
 /* ── Scrollbar ────────────────────────────────────────── */
@@ -74,15 +82,14 @@ body::after {
   width: 5px;
 }
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: #1e2128;
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--color-neon-cyan);
+  background: #4a4f5a;
   border-radius: 10px;
-  opacity: 0.5;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #00c8d6;
+  background: #5a5f6a;
 }
 
 /* Remove spinner from number inputs */
@@ -92,98 +99,37 @@ input[type="number"]::-webkit-outer-spin-button {
   margin: 0;
 }
 
-/* ── Glow Utilities ───────────────────────────────────── */
+/* ── Panel Utilities (Military Bevel) ────────────────── */
 
-.glow-cyan {
-  text-shadow:
-    0 0 7px rgba(0, 240, 255, 0.7),
-    0 0 20px rgba(0, 240, 255, 0.4),
-    0 0 40px rgba(0, 240, 255, 0.2);
-  box-shadow:
-    0 0 7px rgba(0, 240, 255, 0.3),
-    0 0 20px rgba(0, 240, 255, 0.15);
+.panel {
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border-light);
+  border-left: 1px solid var(--color-border-light);
+  border-bottom: 1px solid var(--color-border-dark);
+  border-right: 1px solid var(--color-border-dark);
 }
 
-.glow-red {
-  text-shadow:
-    0 0 7px rgba(255, 45, 85, 0.7),
-    0 0 20px rgba(255, 45, 85, 0.4),
-    0 0 40px rgba(255, 45, 85, 0.2);
-  box-shadow:
-    0 0 7px rgba(255, 45, 85, 0.3),
-    0 0 20px rgba(255, 45, 85, 0.15);
+.panel-inset {
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border-dark);
+  border-left: 1px solid var(--color-border-dark);
+  border-bottom: 1px solid var(--color-border-light);
+  border-right: 1px solid var(--color-border-light);
 }
 
-.glow-gold {
+/* ── LED Text ────────────────────────────────────────── */
+
+.led-text {
+  color: var(--color-led-red);
   text-shadow:
-    0 0 7px rgba(255, 215, 0, 0.7),
-    0 0 20px rgba(255, 215, 0, 0.4),
-    0 0 40px rgba(255, 215, 0, 0.2);
-  box-shadow:
-    0 0 7px rgba(255, 215, 0, 0.3),
-    0 0 20px rgba(255, 215, 0, 0.15);
-}
-
-/* ── Glass Card ───────────────────────────────────────── */
-
-.glass {
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+    0 0 6px rgba(255, 0, 0, 0.8),
+    0 0 12px rgba(255, 0, 0, 0.4),
+    0 0 24px rgba(255, 0, 0, 0.2);
 }
 
 /* ── Keyframes ────────────────────────────────────────── */
 
-@keyframes neon-pulse {
-  0%, 100% {
-    text-shadow:
-      0 0 7px rgba(0, 240, 255, 0.8),
-      0 0 20px rgba(0, 240, 255, 0.5),
-      0 0 40px rgba(0, 240, 255, 0.3),
-      0 0 80px rgba(0, 240, 255, 0.1);
-  }
-  50% {
-    text-shadow:
-      0 0 4px rgba(0, 240, 255, 0.6),
-      0 0 12px rgba(0, 240, 255, 0.3),
-      0 0 24px rgba(0, 240, 255, 0.15);
-  }
-}
-
-.animate-neon-pulse {
-  animation: neon-pulse 2s ease-in-out infinite;
-}
-
-@keyframes title-glow {
-  0%, 100% {
-    text-shadow:
-      0 0 10px rgba(0, 240, 255, 0.9),
-      0 0 30px rgba(0, 240, 255, 0.6),
-      0 0 60px rgba(0, 240, 255, 0.3),
-      0 0 100px rgba(0, 240, 255, 0.15);
-    color: #00f0ff;
-  }
-  50% {
-    text-shadow:
-      0 0 5px rgba(255, 255, 255, 0.9),
-      0 0 15px rgba(0, 240, 255, 0.7),
-      0 0 40px rgba(0, 240, 255, 0.4),
-      0 0 70px rgba(0, 240, 255, 0.2);
-    color: #ffffff;
-  }
-}
-
-.animate-title-glow {
-  animation: title-glow 3s ease-in-out infinite;
-}
-
-@keyframes grid-scroll {
-  0% { transform: translateY(0); }
-  100% { transform: translateY(40px); }
-}
-
-/* Fire flicker animation for streak counter */
+/* Fire flicker animation for streak counter — KEPT */
 @keyframes fire-flicker {
   0%, 100% { transform: scaleY(1) scaleX(1); opacity: 1; }
   25% { transform: scaleY(1.1) scaleX(0.95); opacity: 0.9; }
@@ -197,51 +143,7 @@ input[type="number"]::-webkit-outer-spin-button {
   transform-origin: bottom center;
 }
 
-/* ============================================
-   BombStopwatch Animations
-   ============================================ */
-
-/* Rotating gradient border for outer ring */
-@keyframes rotate-border {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.animate-rotate-border {
-  animation: rotate-border 4s linear infinite;
-}
-
-/* Subtle digit pulse when running */
-@keyframes digit-pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.85; }
-}
-
-.animate-digit-pulse {
-  animation: digit-pulse 0.8s ease-in-out infinite;
-}
-
-/* Bright green glow pulse for the sweet spot */
-@keyframes green-glow-pulse {
-  0%, 100% {
-    text-shadow:
-      0 0 20px rgba(0, 255, 136, 0.8),
-      0 0 40px rgba(0, 255, 136, 0.5),
-      0 0 80px rgba(0, 255, 136, 0.3);
-  }
-  50% {
-    text-shadow:
-      0 0 30px rgba(0, 255, 136, 1),
-      0 0 60px rgba(0, 255, 136, 0.7),
-      0 0 120px rgba(0, 255, 136, 0.4);
-  }
-}
-
-.animate-green-glow-pulse {
-  animation: green-glow-pulse 0.4s ease-in-out infinite;
-}
-
-/* Shake animation for miss/danger zone */
+/* Shake animation — KEPT */
 @keyframes shake {
   0%, 100% { transform: translateX(0); }
   10% { transform: translateX(-4px); }
@@ -258,77 +160,17 @@ input[type="number"]::-webkit-outer-spin-button {
   animation: shake 0.5s ease-in-out infinite;
 }
 
-/* Spark travel along fuse */
-@keyframes spark-travel {
-  0% { offset-distance: 0%; opacity: 1; }
-  80% { opacity: 1; }
-  100% { offset-distance: 100%; opacity: 0.8; }
+/* Digit pulse — KEPT */
+@keyframes digit-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.85; }
 }
 
-/* Floating background particles */
-@keyframes float-particle-1 {
-  0%, 100% { transform: translateY(0) translateX(0); opacity: 0.3; }
-  25% { transform: translateY(-15px) translateX(5px); opacity: 0.6; }
-  50% { transform: translateY(-25px) translateX(-3px); opacity: 0.4; }
-  75% { transform: translateY(-10px) translateX(8px); opacity: 0.5; }
+.animate-digit-pulse {
+  animation: digit-pulse 0.8s ease-in-out infinite;
 }
 
-@keyframes float-particle-2 {
-  0%, 100% { transform: translateY(0) translateX(0); opacity: 0.2; }
-  33% { transform: translateY(-20px) translateX(-8px); opacity: 0.5; }
-  66% { transform: translateY(-8px) translateX(12px); opacity: 0.3; }
-}
-
-@keyframes float-particle-3 {
-  0%, 100% { transform: translateY(0) translateX(0); opacity: 0.4; }
-  50% { transform: translateY(-30px) translateX(-5px); opacity: 0.2; }
-}
-
-/* Fuse glow animation */
-@keyframes fuse-glow {
-  0% { stroke-dashoffset: 40; }
-  100% { stroke-dashoffset: 0; }
-}
-
-/* ============================================
-   StopButton Animations
-   ============================================ */
-
-/* Pulsing box-shadow glow for running state */
-@keyframes button-pulse-glow {
-  0%, 100% {
-    box-shadow:
-      0 0 20px rgba(255, 45, 85, 0.4),
-      0 0 40px rgba(255, 45, 85, 0.2),
-      inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  }
-  50% {
-    box-shadow:
-      0 0 35px rgba(255, 45, 85, 0.7),
-      0 0 70px rgba(255, 45, 85, 0.3),
-      inset 0 1px 0 rgba(255, 255, 255, 0.15);
-  }
-}
-
-.animate-button-pulse-glow {
-  animation: button-pulse-glow 0.8s ease-in-out infinite;
-}
-
-/* Subtle scale pulse for running button */
-@keyframes button-scale-pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.02); }
-}
-
-.animate-button-scale-pulse {
-  animation: button-scale-pulse 1s ease-in-out infinite;
-}
-
-/* ============================================
-   BattleBalance Animations
-   ============================================ */
-
-/* Pulsing glow on dominant bar (>80%) */
+/* Bar pulse glow — KEPT */
 @keyframes bar-pulse-glow {
   0%, 100% { filter: brightness(1); }
   50% { filter: brightness(1.4); }
@@ -338,11 +180,7 @@ input[type="number"]::-webkit-outer-spin-button {
   animation: bar-pulse-glow 1.2s ease-in-out infinite;
 }
 
-/* ============================================
-   AmmoCounter Animations
-   ============================================ */
-
-/* Pulsing red for low ammo */
+/* Ammo pulse — KEPT */
 @keyframes ammo-pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.4; }
@@ -352,9 +190,57 @@ input[type="number"]::-webkit-outer-spin-button {
   animation: ammo-pulse 0.8s ease-in-out infinite;
 }
 
-/* ============================================
-   StreakCounter Animations
-   ============================================ */
+/* ── NEW: Pulse Red (running state) ──────────────────── */
+
+@keyframes pulse-red {
+  0%, 100% {
+    box-shadow:
+      0 0 8px rgba(204, 0, 0, 0.3),
+      0 0 16px rgba(204, 0, 0, 0.15);
+  }
+  50% {
+    box-shadow:
+      0 0 16px rgba(204, 0, 0, 0.6),
+      0 0 32px rgba(204, 0, 0, 0.3);
+  }
+}
+
+.animate-pulse-red {
+  animation: pulse-red 0.8s ease-in-out infinite;
+}
+
+/* ── NEW: Spark Flicker (bomb fuse) ──────────────────── */
+
+@keyframes spark-flicker {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  25% { opacity: 0.7; transform: scale(1.2); }
+  50% { opacity: 1; transform: scale(0.9); }
+  75% { opacity: 0.6; transform: scale(1.1); }
+}
+
+.animate-spark-flicker {
+  animation: spark-flicker 0.15s ease-in-out infinite;
+}
+
+/* ── NEW: Display Pulse (LED brightness) ─────────────── */
+
+@keyframes display-pulse {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(0.85); }
+}
+
+.animate-display-pulse {
+  animation: display-pulse 1.5s ease-in-out infinite;
+}
+
+/* Spark travel along fuse */
+@keyframes spark-travel {
+  0% { offset-distance: 0%; opacity: 1; }
+  80% { opacity: 1; }
+  100% { offset-distance: 100%; opacity: 0.8; }
+}
+
+/* ── Streak Animations (military palette) ────────────── */
 
 /* Fire gradient border animation */
 @keyframes fire-border {
@@ -367,15 +253,15 @@ input[type="number"]::-webkit-outer-spin-button {
   animation: fire-border 2s ease-in-out infinite;
 }
 
-/* On-fire container: scale pulse + fire glow */
+/* On-fire container: scale pulse + warm glow */
 @keyframes streak-fire {
   0%, 100% {
     transform: scale(1);
-    box-shadow: 0 0 12px rgba(255, 107, 0, 0.3), 0 0 24px rgba(255, 215, 0, 0.15);
+    box-shadow: 0 0 12px rgba(204, 102, 0, 0.3), 0 0 24px rgba(255, 204, 0, 0.15);
   }
   50% {
     transform: scale(1.04);
-    box-shadow: 0 0 20px rgba(255, 107, 0, 0.5), 0 0 40px rgba(255, 215, 0, 0.25);
+    box-shadow: 0 0 20px rgba(204, 102, 0, 0.5), 0 0 40px rgba(255, 204, 0, 0.25);
   }
 }
 

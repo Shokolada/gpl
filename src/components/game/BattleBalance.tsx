@@ -39,15 +39,25 @@ export default function BattleBalance({
 
   return (
     <div className="w-full">
-      {/* Glass container */}
+      {/* Sunken panel container — inset bevel */}
       <div
         className="rounded-lg px-3 py-2.5"
         style={{
-          background: "rgba(10, 15, 30, 0.6)",
-          backdropFilter: "blur(8px)",
-          border: "1px solid rgba(255, 255, 255, 0.06)",
+          backgroundColor: "#1e2128",
+          borderTop: "2px solid #15181e",
+          borderLeft: "2px solid #15181e",
+          borderBottom: "2px solid #4a4f5a",
+          borderRight: "2px solid #4a4f5a",
         }}
       >
+        {/* BATTLE BALANCE label */}
+        <p
+          className="text-center mb-2 text-[9px] font-[family-name:var(--font-orbitron)] font-medium uppercase tracking-[0.2em]"
+          style={{ color: "#6b7280" }}
+        >
+          BATTLE BALANCE
+        </p>
+
         {/* Team names and percentages */}
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
@@ -84,7 +94,7 @@ export default function BattleBalance({
         {/* Progress bar track */}
         <div
           className="relative h-2 w-full rounded-full overflow-hidden"
-          style={{ backgroundColor: "#0a0f1e" }}
+          style={{ backgroundColor: "#0a0c10" }}
         >
           {/* Side A fill (from left) */}
           <div
@@ -93,8 +103,7 @@ export default function BattleBalance({
             }`}
             style={{
               width: `${sideAPercent}%`,
-              background: `linear-gradient(90deg, ${sideAColor}cc, ${sideAColor})`,
-              boxShadow: `0 0 8px ${sideAColor}88, inset 0 1px 0 rgba(255,255,255,0.2)`,
+              backgroundColor: sideAColor,
             }}
           />
 
@@ -105,30 +114,7 @@ export default function BattleBalance({
             }`}
             style={{
               width: `${sideBPercent}%`,
-              background: `linear-gradient(270deg, ${sideBColor}cc, ${sideBColor})`,
-              boxShadow: `0 0 8px ${sideBColor}88, inset 0 1px 0 rgba(255,255,255,0.2)`,
-            }}
-          />
-
-          {/* Edge glow - Side A */}
-          <div
-            className="absolute inset-y-0 transition-all duration-500"
-            style={{
-              left: `${sideAPercent - 1}%`,
-              width: "2px",
-              background: sideAColor,
-              boxShadow: `0 0 6px ${sideAColor}, 0 0 12px ${sideAColor}88`,
-            }}
-          />
-
-          {/* Edge glow - Side B */}
-          <div
-            className="absolute inset-y-0 transition-all duration-500"
-            style={{
-              right: `${sideBPercent - 1}%`,
-              width: "2px",
-              background: sideBColor,
-              boxShadow: `0 0 6px ${sideBColor}, 0 0 12px ${sideBColor}88`,
+              backgroundColor: sideBColor,
             }}
           />
         </div>

@@ -14,50 +14,40 @@ const resultConfig: Record<
   {
     title: string;
     subtitle?: string;
-    glowColor: string;
-    textColor: string;
+    color: string;
+    textColorClass: string;
     borderColor: string;
-    shadowRgb: string;
-    bgRadial: string;
   }
 > = {
   perfect: {
     title: 'PERFECT!',
     subtitle: 'JACKPOT!',
-    glowColor: '#ffd700',
-    textColor: 'text-[#ffd700]',
-    borderColor: 'border-[#ffd700]/40',
-    shadowRgb: '255, 215, 0',
-    bgRadial: 'radial-gradient(ellipse at center, rgba(255,215,0,0.15) 0%, rgba(255,165,0,0.05) 50%, transparent 80%)',
+    color: '#ffcc00',
+    textColorClass: 'text-[#ffcc00]',
+    borderColor: '#ffcc00',
   },
   success: {
     title: 'SUCCESS!',
-    glowColor: '#00ff88',
-    textColor: 'text-[#00ff88]',
-    borderColor: 'border-[#00ff88]/40',
-    shadowRgb: '0, 255, 136',
-    bgRadial: 'radial-gradient(ellipse at center, rgba(0,255,136,0.12) 0%, rgba(0,255,136,0.03) 50%, transparent 80%)',
+    color: '#009933',
+    textColorClass: 'text-[#009933]',
+    borderColor: '#009933',
   },
   early: {
     title: 'TOO EARLY',
     subtitle: 'Free retry \u2014 no bomb lost!',
-    glowColor: '#00f0ff',
-    textColor: 'text-[#00f0ff]',
-    borderColor: 'border-[#00f0ff]/30',
-    shadowRgb: '0, 240, 255',
-    bgRadial: 'radial-gradient(ellipse at center, rgba(0,240,255,0.08) 0%, rgba(0,240,255,0.02) 50%, transparent 80%)',
+    color: '#0066cc',
+    textColorClass: 'text-[#0066cc]',
+    borderColor: '#0066cc',
   },
   miss: {
     title: 'MISS!',
-    glowColor: '#ff2d55',
-    textColor: 'text-[#ff2d55]',
-    borderColor: 'border-[#ff2d55]/40',
-    shadowRgb: '255, 45, 85',
-    bgRadial: 'radial-gradient(ellipse at center, rgba(255,45,85,0.15) 0%, rgba(255,45,85,0.04) 50%, transparent 80%)',
+    color: '#cc0000',
+    textColorClass: 'text-[#cc0000]',
+    borderColor: '#cc0000',
   },
 };
 
-/* ─── Confetti: 35 colored squares fly outward from center ─── */
+/* --- Confetti: military colors (gold, white, red) --- */
 function ConfettiParticles() {
   const particles = useMemo(
     () =>
@@ -71,7 +61,7 @@ function ConfettiParticles() {
           rotation: Math.random() * 720 - 360,
           scale: Math.random() * 0.6 + 0.4,
           size: Math.random() * 6 + 4,
-          color: ['#ffd700', '#ff2d55', '#00ff88', '#00f0ff', '#ff8c00', '#ff6ec7'][
+          color: ['#ffcc00', '#ffffff', '#cc0000', '#ffcc00', '#ffffff', '#cc0000'][
             Math.floor(Math.random() * 6)
           ],
           delay: Math.random() * 0.15,
@@ -111,7 +101,7 @@ function ConfettiParticles() {
   );
 }
 
-/* ─── Gentle rising particles for SUCCESS ─── */
+/* --- Gentle rising particles for SUCCESS --- */
 function RisingParticles() {
   const particles = useMemo(
     () =>
@@ -132,8 +122,8 @@ function RisingParticles() {
       {particles.map((p) => (
         <motion.div
           key={p.id}
-          className="absolute left-1/2 top-1/2 rounded-full bg-[#00ff88]"
-          style={{ width: p.size, height: p.size }}
+          className="absolute left-1/2 top-1/2 rounded-full"
+          style={{ width: p.size, height: p.size, backgroundColor: '#009933' }}
           initial={{ x: p.x, y: p.startY, opacity: 0, scale: 0 }}
           animate={{
             y: p.endY,
@@ -151,7 +141,7 @@ function RisingParticles() {
   );
 }
 
-/* ─── Explosion lines radiating outward for MISS ─── */
+/* --- Explosion lines radiating outward for MISS --- */
 function ExplosionEffect() {
   const shards = useMemo(
     () =>
@@ -174,10 +164,11 @@ function ExplosionEffect() {
       {shards.map((s) => (
         <motion.div
           key={s.id}
-          className="absolute left-1/2 top-1/2 rounded-full bg-[#ff2d55]"
+          className="absolute left-1/2 top-1/2 rounded-full"
           style={{
             width: 2,
             height: s.length,
+            backgroundColor: '#cc0000',
             transformOrigin: 'center center',
             rotate: `${s.rotation}deg`,
           }}
@@ -208,22 +199,24 @@ export default function ResultModal({ result, onClose }: ResultModalProps) {
         exit={{ opacity: 0 }}
         transition={{ duration: 0.25 }}
       >
-        {/* Backdrop with heavy blur */}
+        {/* Backdrop — dark overlay with reduced blur */}
         <motion.div
-          className="absolute inset-0 bg-black/80 backdrop-blur-xl"
+          className="absolute inset-0 bg-black/80 backdrop-blur-md"
           onClick={onClose}
           initial={{ backdropFilter: 'blur(0px)' }}
-          animate={{ backdropFilter: 'blur(24px)' }}
+          animate={{ backdropFilter: 'blur(12px)' }}
           transition={{ duration: 0.3 }}
         />
 
-        {/* Modal Card */}
+        {/* Modal Card — dark panel, beveled, no glass/blur/radial */}
         <motion.div
-          className={`relative z-10 mx-4 flex w-full max-w-sm flex-col items-center overflow-hidden rounded-2xl border ${config.borderColor} p-8`}
+          className="relative z-10 mx-4 flex w-full max-w-sm flex-col items-center overflow-hidden rounded-2xl p-8"
           style={{
-            backgroundColor: 'rgba(10, 15, 30, 0.95)',
-            backgroundImage: config.bgRadial,
-            boxShadow: `0 0 60px rgba(${config.shadowRgb}, 0.2), 0 0 120px rgba(${config.shadowRgb}, 0.1), inset 0 1px 0 rgba(255,255,255,0.05)`,
+            backgroundColor: '#1e2128',
+            borderTop: `2px solid ${config.borderColor}`,
+            borderLeft: `2px solid ${config.borderColor}`,
+            borderBottom: '2px solid #15181e',
+            borderRight: '2px solid #15181e',
           }}
           initial={{ scale: 0.4, opacity: 0, y: 30 }}
           animate={
@@ -246,26 +239,6 @@ export default function ResultModal({ result, onClose }: ResultModalProps) {
             }),
           }}
         >
-          {/* Shimmer border for PERFECT */}
-          {isPerfect && (
-            <motion.div
-              className="pointer-events-none absolute inset-0 rounded-2xl"
-              style={{
-                background:
-                  'linear-gradient(135deg, transparent 30%, rgba(255,215,0,0.3) 50%, transparent 70%)',
-                backgroundSize: '200% 200%',
-              }}
-              animate={{
-                backgroundPosition: ['0% 0%', '200% 200%'],
-              }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                ease: 'linear',
-              }}
-            />
-          )}
-
           {/* Confetti for PERFECT */}
           {isPerfect && <ConfettiParticles />}
 
@@ -275,39 +248,13 @@ export default function ResultModal({ result, onClose }: ResultModalProps) {
           {/* Explosion for MISS */}
           {result.result === 'miss' && <ExplosionEffect />}
 
-          {/* Glow orb behind title */}
-          <motion.div
-            className="pointer-events-none absolute top-8 h-32 w-32 rounded-full opacity-40 blur-3xl"
-            style={{ backgroundColor: config.glowColor }}
-            initial={{ scale: 0 }}
-            animate={{ scale: [0, 1.2, 1] }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-          />
-
           {/* Result Title */}
           <motion.h2
-            className={`relative z-10 font-[family-name:var(--font-orbitron)] text-5xl font-black tracking-wider ${config.textColor}`}
-            style={
-              isPerfect
-                ? {
-                    textShadow: `0 0 20px rgba(255,215,0,0.8), 0 0 40px rgba(255,215,0,0.4), 0 0 80px rgba(255,215,0,0.2)`,
-                  }
-                : {
-                    textShadow: `0 0 16px rgba(${config.shadowRgb}, 0.6), 0 0 32px rgba(${config.shadowRgb}, 0.3)`,
-                  }
-            }
+            className={`relative z-10 font-[family-name:var(--font-orbitron)] text-5xl font-black tracking-wider ${config.textColorClass}`}
             initial={{ scale: 0.3, opacity: 0 }}
             animate={
               isPerfect
-                ? {
-                    scale: [0.3, 1.15, 1],
-                    opacity: 1,
-                    textShadow: [
-                      '0 0 20px rgba(255,215,0,0.8), 0 0 40px rgba(255,215,0,0.4)',
-                      '0 0 30px rgba(255,215,0,1), 0 0 60px rgba(255,215,0,0.6)',
-                      '0 0 20px rgba(255,215,0,0.8), 0 0 40px rgba(255,215,0,0.4)',
-                    ],
-                  }
+                ? { scale: [0.3, 1.15, 1], opacity: 1 }
                 : { scale: 1, opacity: 1 }
             }
             transition={{
@@ -315,9 +262,6 @@ export default function ResultModal({ result, onClose }: ResultModalProps) {
               type: 'spring',
               stiffness: 400,
               damping: 14,
-              ...(isPerfect && {
-                textShadow: { duration: 1.5, repeat: Infinity, ease: 'easeInOut' },
-              }),
             }}
           >
             {config.title}
@@ -327,7 +271,7 @@ export default function ResultModal({ result, onClose }: ResultModalProps) {
           {config.subtitle && (
             <motion.p
               className={`relative z-10 mt-2 font-[family-name:var(--font-orbitron)] text-sm font-medium tracking-widest uppercase ${
-                isPerfect ? 'text-[#ffd700]/70' : 'text-slate-400'
+                isPerfect ? 'text-[#ffcc00]/70' : 'text-[#6b7280]'
               }`}
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
@@ -340,7 +284,7 @@ export default function ResultModal({ result, onClose }: ResultModalProps) {
           {/* -1 BOMB warning for MISS */}
           {result.result === 'miss' && (
             <motion.p
-              className="relative z-10 mt-2 font-[family-name:var(--font-orbitron)] text-sm font-bold tracking-widest text-[#ff2d55]"
+              className="relative z-10 mt-2 font-[family-name:var(--font-orbitron)] text-sm font-bold tracking-widest text-[#cc0000]"
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: [0, 1, 0.7, 1], scale: 1 }}
               transition={{ delay: 0.3, duration: 0.5 }}
@@ -356,12 +300,17 @@ export default function ResultModal({ result, onClose }: ResultModalProps) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
           >
-            <p className="font-[family-name:var(--font-orbitron)] text-[10px] font-medium uppercase tracking-[0.2em] text-slate-500">
+            <p
+              className="font-[family-name:var(--font-orbitron)] text-[10px] font-medium uppercase tracking-[0.2em]"
+              style={{ color: '#6b7280' }}
+            >
               Time Stopped
             </p>
             <p className="mt-1 font-[family-name:var(--font-jetbrains)] text-4xl font-bold text-white">
               {result.timeStopped.toFixed(3)}
-              <span className="text-xl text-slate-400">s</span>
+              <span className="text-xl" style={{ color: '#6b7280' }}>
+                s
+              </span>
             </p>
           </motion.div>
 
@@ -380,23 +329,15 @@ export default function ResultModal({ result, onClose }: ResultModalProps) {
             >
               <span
                 className={`font-[family-name:var(--font-orbitron)] text-2xl font-black ${
-                  isPerfect ? 'text-[#ffd700]' : 'text-white'
+                  isPerfect ? 'text-[#ffcc00]' : 'text-white'
                 }`}
-                style={
-                  isPerfect
-                    ? {
-                        textShadow:
-                          '0 0 12px rgba(255,215,0,0.5), 0 0 24px rgba(255,215,0,0.25)',
-                      }
-                    : undefined
-                }
               >
                 +{result.pixelsEarned} pixels!
               </span>
             </motion.div>
           )}
 
-          {/* Streak Badge */}
+          {/* Streak Badge — gold border panel */}
           {result.streakCount > 1 && (
             <motion.div
               className="relative z-10 mt-4"
@@ -405,29 +346,27 @@ export default function ResultModal({ result, onClose }: ResultModalProps) {
               transition={{ delay: 0.5 }}
             >
               <span
-                className="inline-flex items-center gap-1.5 rounded-full px-5 py-1.5 font-[family-name:var(--font-orbitron)] text-sm font-bold tracking-wide text-orange-200"
+                className="inline-flex items-center gap-1.5 rounded-lg px-5 py-1.5 font-[family-name:var(--font-orbitron)] text-sm font-bold tracking-wide"
                 style={{
-                  background:
-                    'linear-gradient(135deg, rgba(255,100,0,0.25), rgba(255,45,85,0.25))',
-                  border: '1px solid rgba(255,140,0,0.3)',
-                  boxShadow:
-                    '0 0 16px rgba(255,100,0,0.2), inset 0 1px 0 rgba(255,255,255,0.05)',
+                  backgroundColor: '#1e2128',
+                  color: '#ffcc00',
+                  border: '2px solid #ffcc00',
                 }}
               >
-                <span className="text-base">&#x1F525;</span>
                 x{result.streakMultiplier} STREAK!
               </span>
             </motion.div>
           )}
 
-          {/* Continue Button */}
+          {/* Continue Button — steel gray beveled */}
           <motion.button
-            className="relative z-10 mt-8 w-full rounded-xl border border-white/10 px-8 py-3.5 font-[family-name:var(--font-orbitron)] text-base font-semibold tracking-wide text-white backdrop-blur-md transition-all hover:border-white/20 hover:bg-white/15 active:bg-white/20"
+            className="relative z-10 mt-8 w-full rounded-xl px-8 py-3.5 font-[family-name:var(--font-orbitron)] text-base font-semibold tracking-wide text-white transition-all cursor-pointer"
             style={{
-              background:
-                'linear-gradient(135deg, rgba(255,255,255,0.07), rgba(255,255,255,0.03))',
-              boxShadow:
-                '0 4px 24px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.06)',
+              background: 'linear-gradient(180deg, #4a4f5a 0%, #2a2d35 100%)',
+              borderTop: '2px solid #4a4f5a',
+              borderLeft: '2px solid #4a4f5a',
+              borderBottom: '2px solid #15181e',
+              borderRight: '2px solid #15181e',
             }}
             onClick={onClose}
             initial={{ opacity: 0, y: 20 }}
