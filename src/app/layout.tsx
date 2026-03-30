@@ -1,15 +1,26 @@
 import type { Metadata } from "next";
-import { Geist_Mono } from "next/font/google";
+import { Orbitron, JetBrains_Mono, Inter } from "next/font/google";
 import "./globals.css";
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const orbitron = Orbitron({
+  variable: "--font-orbitron",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800", "900"],
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-jetbrains",
+  subsets: ["latin"],
+});
+
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
   title: "GPL — Global Precision League",
-  description: "Competitive precision timing game. Stop the bomb at exactly 10.000 seconds!",
+  description: "Competitive precision timing game. Stop the bomb at exactly 10.000 seconds. Conquer the map.",
 };
 
 export default function RootLayout({
@@ -18,8 +29,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${geistMono.variable} h-full`}>
-      <body className="min-h-full bg-gray-950 text-white antialiased">
+    <html lang="en" className={`${orbitron.variable} ${jetbrainsMono.variable} ${inter.variable} h-full`}>
+      <body className="min-h-full bg-[#050510] text-white antialiased font-sans">
         {children}
       </body>
     </html>

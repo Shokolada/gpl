@@ -29,6 +29,10 @@ interface BattleViewProps {
 const MAX_BOMBS = 5;
 
 export default function BattleView({ arena: initialArena }: BattleViewProps) {
+  // ══════════════════════════════════════════════
+  // ALL GAME LOGIC — PRESERVED EXACTLY AS-IS
+  // ══════════════════════════════════════════════
+
   // Team selection
   const [playerTeam, setPlayerTeam] = useState<TeamSide | null>(null);
 
@@ -200,77 +204,155 @@ export default function BattleView({ arena: initialArena }: BattleViewProps) {
     }
   }, [time, isRunning]);
 
-  // ──────────────────────────────────────────────
-  // Team Selection Overlay
-  // ──────────────────────────────────────────────
+  // ══════════════════════════════════════════════
+  // TEAM SELECTION SCREEN
+  // ══════════════════════════════════════════════
   if (playerTeam === null) {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-950">
-        <div className="absolute inset-0 bg-gradient-to-b from-gray-900 to-gray-950" />
+      <div className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-[#050510]">
+        {/* Animated gradient mesh background */}
+        <div className="absolute inset-0">
+          <motion.div
+            className="absolute inset-0 opacity-30"
+            style={{
+              background:
+                "radial-gradient(ellipse 80% 50% at 20% 40%, rgba(0,240,255,0.12) 0%, transparent 60%), radial-gradient(ellipse 60% 60% at 80% 60%, rgba(255,45,85,0.1) 0%, transparent 60%), radial-gradient(ellipse 50% 40% at 50% 20%, rgba(0,255,136,0.06) 0%, transparent 60%)",
+            }}
+            animate={{
+              opacity: [0.2, 0.35, 0.2],
+            }}
+            transition={{
+              duration: 6,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+          />
+          {/* Grid lines */}
+          <div
+            className="absolute inset-0 opacity-[0.04]"
+            style={{
+              backgroundImage:
+                "linear-gradient(rgba(0,240,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(0,240,255,0.5) 1px, transparent 1px)",
+              backgroundSize: "60px 60px",
+            }}
+          />
+        </div>
 
         <motion.div
-          className="relative z-10 flex flex-col items-center gap-8 px-6 w-full max-w-md"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+          className="relative z-10 flex w-full max-w-lg flex-col items-center gap-10 px-6"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6 }}
         >
           {/* Arena name */}
-          <div className="text-center">
-            <h2 className="text-lg font-medium text-gray-400 uppercase tracking-widest">
+          <motion.div
+            className="text-center"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1, duration: 0.5 }}
+          >
+            <h2
+              className="font-[family-name:var(--font-orbitron)] text-sm font-medium uppercase tracking-[0.25em] text-[#00f0ff]"
+              style={{ textShadow: "0 0 20px rgba(0,240,255,0.4)" }}
+            >
               {initialArena.name}
             </h2>
-            <h1 className="mt-2 text-3xl font-black text-white">
+            <h1 className="mt-4 font-[family-name:var(--font-orbitron)] text-3xl font-black tracking-wide text-white sm:text-4xl">
               Choose Your Side
             </h1>
-          </div>
+          </motion.div>
 
-          {/* VS divider */}
-          <div className="flex items-center gap-4 w-full">
-            {/* Side A button */}
+          {/* Team cards row */}
+          <div className="flex w-full items-center gap-3 sm:gap-5">
+            {/* Side A */}
             <motion.button
-              className="flex-1 rounded-2xl border-2 px-4 py-6 text-center transition-colors"
+              className="group relative flex-1 overflow-hidden rounded-2xl border border-white/10 p-5 text-center backdrop-blur-sm transition-colors sm:p-7"
               style={{
-                borderColor: initialArena.sideA.color,
-                backgroundColor: `${initialArena.sideA.color}15`,
+                backgroundColor: `${initialArena.sideA.color}08`,
               }}
+              initial={{ opacity: 0, x: -60 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.25, type: "spring", stiffness: 200, damping: 20 }}
               whileHover={{
-                backgroundColor: `${initialArena.sideA.color}30`,
-                scale: 1.02,
+                borderColor: initialArena.sideA.color,
+                boxShadow: `0 0 40px ${initialArena.sideA.color}25, inset 0 0 30px ${initialArena.sideA.color}08`,
               }}
-              whileTap={{ scale: 0.97 }}
+              whileTap={{ scale: 0.96 }}
               onClick={() => handleSelectTeam("side_a")}
             >
+              {/* Glow on hover */}
               <div
-                className="w-10 h-10 rounded-full mx-auto mb-3"
-                style={{ backgroundColor: initialArena.sideA.color }}
+                className="absolute inset-0 opacity-0 transition-opacity group-hover:opacity-100"
+                style={{
+                  background: `radial-gradient(circle at center, ${initialArena.sideA.color}15 0%, transparent 70%)`,
+                }}
               />
-              <p className="text-xl font-bold text-white">
+              {/* Pulse circle */}
+              <div className="relative mx-auto mb-4 h-14 w-14 sm:h-16 sm:w-16">
+                <motion.div
+                  className="absolute inset-0 rounded-full opacity-30"
+                  style={{ backgroundColor: initialArena.sideA.color }}
+                  animate={{ scale: [1, 1.4, 1], opacity: [0.3, 0.1, 0.3] }}
+                  transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+                />
+                <div
+                  className="absolute inset-0 rounded-full"
+                  style={{ backgroundColor: initialArena.sideA.color }}
+                />
+              </div>
+              <p className="relative font-[family-name:var(--font-orbitron)] text-lg font-bold text-white sm:text-xl">
                 {initialArena.sideA.name}
               </p>
             </motion.button>
 
             {/* VS text */}
-            <span className="text-2xl font-black text-gray-600">VS</span>
+            <motion.span
+              className="shrink-0 font-[family-name:var(--font-orbitron)] text-2xl font-black text-white/30 sm:text-3xl"
+              style={{ textShadow: "0 0 20px rgba(255,255,255,0.1)" }}
+              initial={{ opacity: 0, scale: 0.5 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.4 }}
+            >
+              VS
+            </motion.span>
 
-            {/* Side B button */}
+            {/* Side B */}
             <motion.button
-              className="flex-1 rounded-2xl border-2 px-4 py-6 text-center transition-colors"
+              className="group relative flex-1 overflow-hidden rounded-2xl border border-white/10 p-5 text-center backdrop-blur-sm transition-colors sm:p-7"
               style={{
-                borderColor: initialArena.sideB.color,
-                backgroundColor: `${initialArena.sideB.color}15`,
+                backgroundColor: `${initialArena.sideB.color}08`,
               }}
+              initial={{ opacity: 0, x: 60 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.25, type: "spring", stiffness: 200, damping: 20 }}
               whileHover={{
-                backgroundColor: `${initialArena.sideB.color}30`,
-                scale: 1.02,
+                borderColor: initialArena.sideB.color,
+                boxShadow: `0 0 40px ${initialArena.sideB.color}25, inset 0 0 30px ${initialArena.sideB.color}08`,
               }}
-              whileTap={{ scale: 0.97 }}
+              whileTap={{ scale: 0.96 }}
               onClick={() => handleSelectTeam("side_b")}
             >
+              {/* Glow on hover */}
               <div
-                className="w-10 h-10 rounded-full mx-auto mb-3"
-                style={{ backgroundColor: initialArena.sideB.color }}
+                className="absolute inset-0 opacity-0 transition-opacity group-hover:opacity-100"
+                style={{
+                  background: `radial-gradient(circle at center, ${initialArena.sideB.color}15 0%, transparent 70%)`,
+                }}
               />
-              <p className="text-xl font-bold text-white">
+              {/* Pulse circle */}
+              <div className="relative mx-auto mb-4 h-14 w-14 sm:h-16 sm:w-16">
+                <motion.div
+                  className="absolute inset-0 rounded-full opacity-30"
+                  style={{ backgroundColor: initialArena.sideB.color }}
+                  animate={{ scale: [1, 1.4, 1], opacity: [0.3, 0.1, 0.3] }}
+                  transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+                />
+                <div
+                  className="absolute inset-0 rounded-full"
+                  style={{ backgroundColor: initialArena.sideB.color }}
+                />
+              </div>
+              <p className="relative font-[family-name:var(--font-orbitron)] text-lg font-bold text-white sm:text-xl">
                 {initialArena.sideB.name}
               </p>
             </motion.button>
@@ -280,26 +362,43 @@ export default function BattleView({ arena: initialArena }: BattleViewProps) {
     );
   }
 
-  // ──────────────────────────────────────────────
-  // Main Battle Screen
-  // ──────────────────────────────────────────────
+  // ══════════════════════════════════════════════
+  // MAIN BATTLE SCREEN
+  // ══════════════════════════════════════════════
   return (
-    <div className="relative flex flex-col min-h-screen bg-gray-950 text-white">
-      {/* Top: Battle Balance */}
-      <div className="px-4 pt-4 pb-2">
-        <BattleBalance
-          sideAName={initialArena.sideA.name}
-          sideBName={initialArena.sideB.name}
-          sideAColor={initialArena.sideA.color}
-          sideBColor={initialArena.sideB.color}
-          sideACaptured={sideACaptured}
-          sideBCaptured={sideBCaptured}
-          totalPixels={initialArena.totalPixels}
-        />
+    <div className="relative flex min-h-screen flex-col bg-[#050510] text-white">
+      {/* Vignette overlay */}
+      <div
+        className="pointer-events-none fixed inset-0 z-10"
+        style={{
+          background:
+            "radial-gradient(ellipse 70% 60% at center, transparent 0%, rgba(5,5,16,0.4) 60%, rgba(5,5,16,0.85) 100%)",
+        }}
+      />
+
+      {/* Top: Battle Balance + Back link */}
+      <div className="relative z-20 flex items-start justify-between px-4 pt-4 pb-2 sm:px-6">
+        <div className="flex-1">
+          <BattleBalance
+            sideAName={initialArena.sideA.name}
+            sideBName={initialArena.sideB.name}
+            sideAColor={initialArena.sideA.color}
+            sideBColor={initialArena.sideB.color}
+            sideACaptured={sideACaptured}
+            sideBCaptured={sideBCaptured}
+            totalPixels={initialArena.totalPixels}
+          />
+        </div>
+        <a
+          href="/"
+          className="ml-3 mt-1 shrink-0 font-[family-name:var(--font-jetbrains)] text-xs text-slate-600 transition-colors hover:text-[#00f0ff]"
+        >
+          &larr; arenas
+        </a>
       </div>
 
-      {/* Middle: Canvas + Stopwatch area */}
-      <div className="flex-1 flex flex-col items-center justify-center px-4 gap-4 relative">
+      {/* Middle: Canvas + Stopwatch area (CSS Grid) */}
+      <div className="relative z-20 flex flex-1 flex-col items-center justify-center px-4 sm:px-6">
         {/* Siphon animation overlay */}
         <PixelSiphon
           isActive={showSiphon}
@@ -310,24 +409,33 @@ export default function BattleView({ arena: initialArena }: BattleViewProps) {
           onComplete={handleSiphonComplete}
         />
 
-        {/* Desktop: side-by-side | Mobile: stacked */}
-        <div className="w-full max-w-4xl flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8">
+        {/* Responsive grid: mobile stacked, desktop 3-col */}
+        <div className="grid w-full max-w-5xl grid-cols-1 items-center gap-4 md:grid-cols-[1fr_auto_1fr] md:gap-6 lg:gap-10">
           {/* Opponent (victim) PixelCanvas */}
-          <div className="w-full md:w-1/3">
-            <PixelCanvas
-              totalPixels={initialArena.totalPixels}
-              capturedPixels={playerCaptured}
-              color={opponentSide.color}
-              secondaryColor={opponentSide.secondaryColor}
-              label={opponentSide.name}
-              className="w-full"
-            />
+          <div className="order-1 md:order-1">
+            <div
+              className="rounded-xl border border-white/5 p-2 backdrop-blur-sm"
+              style={{
+                background:
+                  "linear-gradient(135deg, rgba(255,255,255,0.02), rgba(255,255,255,0.005))",
+                boxShadow: "inset 0 1px 0 rgba(255,255,255,0.03)",
+              }}
+            >
+              <PixelCanvas
+                totalPixels={initialArena.totalPixels}
+                capturedPixels={playerCaptured}
+                color={opponentSide.color}
+                secondaryColor={opponentSide.secondaryColor}
+                label={opponentSide.name}
+                className="w-full"
+              />
+            </div>
           </div>
 
           {/* Center: Stopwatch + Streak */}
-          <div className="flex flex-col items-center gap-3 md:w-1/3">
+          <div className="order-2 flex flex-col items-center gap-3 md:order-2">
             {/* Streak counter floats above stopwatch */}
-            <div className="h-10 flex items-center">
+            <div className="flex h-10 items-center">
               <StreakCounter
                 streak={streak}
                 multiplier={getStreakMultiplier(streak)}
@@ -338,33 +446,55 @@ export default function BattleView({ arena: initialArena }: BattleViewProps) {
           </div>
 
           {/* Player (invader) PixelCanvas */}
-          <div className="w-full md:w-1/3">
-            <PixelCanvas
-              totalPixels={initialArena.totalPixels}
-              capturedPixels={opponentCaptured}
-              color={playerSide.color}
-              secondaryColor={playerSide.secondaryColor}
-              label={playerSide.name}
-              className="w-full"
-            />
+          <div className="order-3 md:order-3">
+            <div
+              className="rounded-xl border border-white/5 p-2 backdrop-blur-sm"
+              style={{
+                background:
+                  "linear-gradient(135deg, rgba(255,255,255,0.02), rgba(255,255,255,0.005))",
+                boxShadow: "inset 0 1px 0 rgba(255,255,255,0.03)",
+              }}
+            >
+              <PixelCanvas
+                totalPixels={initialArena.totalPixels}
+                capturedPixels={opponentCaptured}
+                color={playerSide.color}
+                secondaryColor={playerSide.secondaryColor}
+                label={playerSide.name}
+                className="w-full"
+              />
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Bottom: Action zone */}
-      <div className="px-4 pb-6 pt-2">
-        {/* Ammo + Team Badge row */}
-        <div className="flex items-center justify-between mb-3">
-          <AmmoCounter count={bombsCount} maxBombs={MAX_BOMBS} />
-          <TeamBadge teamName={playerSide.name} teamColor={playerSide.color} />
-        </div>
+      {/* Bottom: Action bar (glass panel) */}
+      <div
+        className="relative z-20 border-t border-white/5 px-4 pb-6 pt-4 sm:px-6"
+        style={{
+          background:
+            "linear-gradient(to top, rgba(10,15,30,0.95), rgba(10,15,30,0.7))",
+          backdropFilter: "blur(16px)",
+        }}
+      >
+        {/* Row: Ammo | StopButton | TeamBadge */}
+        <div className="mx-auto flex w-full max-w-5xl items-center gap-3">
+          <div className="shrink-0">
+            <AmmoCounter count={bombsCount} maxBombs={MAX_BOMBS} />
+          </div>
 
-        {/* Stop Button */}
-        <StopButton
-          isRunning={isRunning}
-          disabled={bombsCount <= 0 && !isRunning}
-          onPress={handleButtonPress}
-        />
+          <div className="flex-1">
+            <StopButton
+              isRunning={isRunning}
+              disabled={bombsCount <= 0 && !isRunning}
+              onPress={handleButtonPress}
+            />
+          </div>
+
+          <div className="shrink-0">
+            <TeamBadge teamName={playerSide.name} teamColor={playerSide.color} />
+          </div>
+        </div>
       </div>
 
       {/* Result Modal overlay */}
