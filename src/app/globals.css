@@ -5,8 +5,8 @@
   --font-display: var(--font-orbitron), ui-monospace, monospace;
   --font-mono: var(--font-jetbrains), ui-monospace, monospace;
 
-  --color-background: #2a2d35;
-  --color-surface: #1e2128;
+  --color-background: #181b22;
+  --color-surface: #1c1f27;
   --color-surface-2: #252830;
   --color-foreground: #ffffff;
 
@@ -57,7 +57,7 @@ body::before {
   position: fixed;
   inset: 0;
   z-index: -2;
-  opacity: 0.04;
+  opacity: 0.025;
   background:
     repeating-linear-gradient(
       45deg,
@@ -82,7 +82,7 @@ body::before {
   width: 5px;
 }
 ::-webkit-scrollbar-track {
-  background: #1e2128;
+  background: #1c1f27;
 }
 ::-webkit-scrollbar-thumb {
   background: #4a4f5a;

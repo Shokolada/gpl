@@ -209,14 +209,13 @@ export default function BattleView({ arena: initialArena }: BattleViewProps) {
   // ══════════════════════════════════════════════
   if (playerTeam === null) {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-[#2a2d35]">
+      <div className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-[#181b22]">
         <motion.div
-          className="relative z-10 flex w-full max-w-lg flex-col items-center gap-10 px-6"
+          className="relative z-10 flex w-full max-w-lg flex-col items-center gap-8 px-6"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6 }}
         >
-          {/* Arena name + title */}
           <motion.div
             className="text-center"
             initial={{ opacity: 0, y: -20 }}
@@ -226,18 +225,16 @@ export default function BattleView({ arena: initialArena }: BattleViewProps) {
             <h2 className="font-[family-name:var(--font-orbitron)] text-sm font-medium uppercase tracking-[0.25em] text-[#6b7280]">
               {initialArena.name}
             </h2>
-            <h1 className="mt-4 font-[family-name:var(--font-orbitron)] text-3xl font-black tracking-wide text-white sm:text-4xl">
+            <h1 className="mt-3 font-[family-name:var(--font-orbitron)] text-3xl font-black tracking-wide text-white sm:text-4xl">
               Choose Your Side
             </h1>
           </motion.div>
 
-          {/* Team cards row */}
           <div className="flex w-full items-center gap-3 sm:gap-5">
-            {/* Side A */}
             <motion.button
               className="group relative flex-1 overflow-hidden rounded-lg p-5 text-center transition-colors sm:p-7"
               style={{
-                backgroundColor: "#1e2128",
+                backgroundColor: "#1c1f27",
                 borderTop: "1px solid #4a4f5a",
                 borderLeft: "1px solid #4a4f5a",
                 borderBottom: "2px solid #15181e",
@@ -246,25 +243,17 @@ export default function BattleView({ arena: initialArena }: BattleViewProps) {
               initial={{ opacity: 0, x: -60 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.25, type: "spring", stiffness: 200, damping: 20 }}
-              whileHover={{
-                borderColor: "#6b7280",
-              }}
               whileTap={{ scale: 0.96 }}
               onClick={() => handleSelectTeam("side_a")}
             >
-              {/* Team color circle (solid, no pulse) */}
-              <div className="relative mx-auto mb-4 h-14 w-14 sm:h-16 sm:w-16">
-                <div
-                  className="absolute inset-0 rounded-full"
-                  style={{ backgroundColor: initialArena.sideA.color }}
-                />
+              <div className="relative mx-auto mb-3 h-14 w-14 sm:h-16 sm:w-16">
+                <div className="absolute inset-0 rounded-full" style={{ backgroundColor: initialArena.sideA.color }} />
               </div>
               <p className="relative font-[family-name:var(--font-orbitron)] text-lg font-bold text-white sm:text-xl">
                 {initialArena.sideA.name}
               </p>
             </motion.button>
 
-            {/* VS text */}
             <motion.span
               className="shrink-0 font-[family-name:var(--font-orbitron)] text-2xl font-black text-[#6b7280] sm:text-3xl"
               initial={{ opacity: 0, scale: 0.5 }}
@@ -274,11 +263,10 @@ export default function BattleView({ arena: initialArena }: BattleViewProps) {
               VS
             </motion.span>
 
-            {/* Side B */}
             <motion.button
               className="group relative flex-1 overflow-hidden rounded-lg p-5 text-center transition-colors sm:p-7"
               style={{
-                backgroundColor: "#1e2128",
+                backgroundColor: "#1c1f27",
                 borderTop: "1px solid #4a4f5a",
                 borderLeft: "1px solid #4a4f5a",
                 borderBottom: "2px solid #15181e",
@@ -287,18 +275,11 @@ export default function BattleView({ arena: initialArena }: BattleViewProps) {
               initial={{ opacity: 0, x: 60 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.25, type: "spring", stiffness: 200, damping: 20 }}
-              whileHover={{
-                borderColor: "#6b7280",
-              }}
               whileTap={{ scale: 0.96 }}
               onClick={() => handleSelectTeam("side_b")}
             >
-              {/* Team color circle (solid, no pulse) */}
-              <div className="relative mx-auto mb-4 h-14 w-14 sm:h-16 sm:w-16">
-                <div
-                  className="absolute inset-0 rounded-full"
-                  style={{ backgroundColor: initialArena.sideB.color }}
-                />
+              <div className="relative mx-auto mb-3 h-14 w-14 sm:h-16 sm:w-16">
+                <div className="absolute inset-0 rounded-full" style={{ backgroundColor: initialArena.sideB.color }} />
               </div>
               <p className="relative font-[family-name:var(--font-orbitron)] text-lg font-bold text-white sm:text-xl">
                 {initialArena.sideB.name}
@@ -310,52 +291,55 @@ export default function BattleView({ arena: initialArena }: BattleViewProps) {
     );
   }
 
+  // Calculate capture percentages for display
+  const playerCapturePercent = initialArena.totalPixels > 0
+    ? Math.round((playerCaptured / initialArena.totalPixels) * 100)
+    : 0;
+  const opponentIntactPercent = initialArena.totalPixels > 0
+    ? Math.round(((initialArena.totalPixels - playerCaptured) / initialArena.totalPixels) * 100)
+    : 100;
+  const playerIntactPercent = initialArena.totalPixels > 0
+    ? Math.round(((initialArena.totalPixels - opponentCaptured) / initialArena.totalPixels) * 100)
+    : 100;
+
   // ══════════════════════════════════════════════
   // MAIN BATTLE SCREEN
   // ══════════════════════════════════════════════
   return (
-    <div className="relative flex min-h-screen flex-col bg-[#2a2d35] text-white">
-      {/* Top: Title bar + Battle Balance + Back link */}
-      <div className="relative z-20 px-4 pt-3 pb-2 sm:px-6">
-        {/* Title bar */}
-        <div
-          className="mb-3 rounded-lg px-4 py-2 text-center"
-          style={{
-            backgroundColor: "#1e2128",
-            borderTop: "1px solid #4a4f5a",
-            borderLeft: "1px solid #4a4f5a",
-            borderBottom: "2px solid #15181e",
-            borderRight: "2px solid #15181e",
-          }}
+    <div className="relative flex h-screen flex-col bg-[#181b22] text-white overflow-hidden">
+      {/* Top: Title — bold, large, NOT in a panel */}
+      <div className="relative z-20 px-3 pt-2">
+        <h1
+          className="text-center font-[family-name:var(--font-orbitron)] text-lg font-black uppercase tracking-[0.15em] text-white sm:text-xl md:text-2xl"
+          style={{ textShadow: "0 2px 4px rgba(0,0,0,0.5)" }}
         >
-          <h1 className="font-[family-name:var(--font-orbitron)] text-xs font-bold uppercase tracking-[0.2em] text-[#6b7280]">
-            Global Precision League
-          </h1>
-        </div>
-
-        <div className="flex items-start justify-between">
-          <div className="flex-1">
-            <BattleBalance
-              sideAName={initialArena.sideA.name}
-              sideBName={initialArena.sideB.name}
-              sideAColor={initialArena.sideA.color}
-              sideBColor={initialArena.sideB.color}
-              sideACaptured={sideACaptured}
-              sideBCaptured={sideBCaptured}
-              totalPixels={initialArena.totalPixels}
-            />
-          </div>
-          <a
-            href="/"
-            className="ml-3 mt-1 shrink-0 font-[family-name:var(--font-jetbrains)] text-xs text-[#6b7280] transition-colors hover:text-white"
-          >
-            &larr; arenas
-          </a>
-        </div>
+          Global Precision League
+        </h1>
       </div>
 
-      {/* Middle: Canvas + Stopwatch area (CSS Grid) */}
-      <div className="relative z-20 flex flex-1 flex-col items-center justify-center px-4 sm:px-6">
+      {/* Battle Balance + Back link */}
+      <div className="relative z-20 flex items-start gap-2 px-3 pt-1 pb-1 sm:px-4">
+        <div className="flex-1">
+          <BattleBalance
+            sideAName={initialArena.sideA.name}
+            sideBName={initialArena.sideB.name}
+            sideAColor={initialArena.sideA.color}
+            sideBColor={initialArena.sideB.color}
+            sideACaptured={sideACaptured}
+            sideBCaptured={sideBCaptured}
+            totalPixels={initialArena.totalPixels}
+          />
+        </div>
+        <a
+          href="/"
+          className="mt-1 shrink-0 font-[family-name:var(--font-jetbrains)] text-[10px] text-[#6b7280] transition-colors hover:text-white"
+        >
+          &larr; arenas
+        </a>
+      </div>
+
+      {/* Main area: Maps + Stopwatch — fills remaining space */}
+      <div className="relative z-20 flex flex-1 flex-col items-center justify-center px-2 sm:px-3">
         {/* Siphon animation overlay */}
         <PixelSiphon
           isActive={showSiphon}
@@ -366,14 +350,14 @@ export default function BattleView({ arena: initialArena }: BattleViewProps) {
           onComplete={handleSiphonComplete}
         />
 
-        {/* Responsive grid: mobile stacked, desktop 3-col */}
-        <div className="grid w-full max-w-5xl grid-cols-1 items-center gap-4 md:grid-cols-[1fr_auto_1fr] md:gap-6 lg:gap-10">
-          {/* Opponent (victim) PixelCanvas */}
+        {/* 3-column grid: tight gaps */}
+        <div className="grid w-full max-w-5xl grid-cols-1 items-center gap-2 md:grid-cols-[1fr_auto_1fr] md:gap-3 lg:gap-4">
+          {/* Left: Opponent map with capture overlay */}
           <div className="order-1 md:order-1">
             <div
-              className="rounded-lg p-2"
+              className="relative rounded-lg p-1.5 overflow-hidden"
               style={{
-                backgroundColor: "#1e2128",
+                backgroundColor: "#1c1f27",
                 borderTop: "1px solid #4a4f5a",
                 borderLeft: "1px solid #4a4f5a",
                 borderBottom: "2px solid #15181e",
@@ -388,28 +372,44 @@ export default function BattleView({ arena: initialArena }: BattleViewProps) {
                 label={opponentSide.name}
                 className="w-full"
               />
+              {/* Capture overlay text */}
+              {playerCapturePercent > 0 && (
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                  <p
+                    className="text-center font-[family-name:var(--font-orbitron)] text-sm font-black uppercase leading-tight text-white sm:text-base md:text-lg"
+                    style={{
+                      textShadow: "0 0 8px rgba(0,0,0,0.9), 0 0 16px rgba(0,0,0,0.7), 0 2px 4px rgba(0,0,0,0.8)",
+                    }}
+                  >
+                    {playerSide.name}: {playerCapturePercent}%<br />
+                    OF {opponentSide.name} CAPTURED
+                  </p>
+                </div>
+              )}
             </div>
+            {/* Flag intact label */}
+            <p className="mt-1 text-center font-[family-name:var(--font-orbitron)] text-[9px] font-medium uppercase tracking-wider text-[#6b7280]">
+              {opponentSide.name} FLAG (INTACT): {opponentIntactPercent}%
+            </p>
           </div>
 
-          {/* Center: Stopwatch + Streak */}
-          <div className="order-2 flex flex-col items-center gap-3 md:order-2">
-            {/* Streak counter floats above stopwatch */}
-            <div className="flex h-10 items-center">
+          {/* Center: Streak + Bomb/Timer */}
+          <div className="order-2 flex flex-col items-center gap-1 md:order-2">
+            <div className="flex h-8 items-center">
               <StreakCounter
                 streak={streak}
                 multiplier={getStreakMultiplier(streak)}
               />
             </div>
-
             <BombStopwatch time={time} isRunning={isRunning} />
           </div>
 
-          {/* Player (invader) PixelCanvas */}
+          {/* Right: Player map with flag info */}
           <div className="order-3 md:order-3">
             <div
-              className="rounded-lg p-2"
+              className="relative rounded-lg p-1.5 overflow-hidden"
               style={{
-                backgroundColor: "#1e2128",
+                backgroundColor: "#1c1f27",
                 borderTop: "1px solid #4a4f5a",
                 borderLeft: "1px solid #4a4f5a",
                 borderBottom: "2px solid #15181e",
@@ -425,34 +425,37 @@ export default function BattleView({ arena: initialArena }: BattleViewProps) {
                 className="w-full"
               />
             </div>
+            {/* Flag intact label */}
+            <p className="mt-1 text-center font-[family-name:var(--font-orbitron)] text-[9px] font-medium uppercase tracking-wider text-[#6b7280]">
+              {playerSide.name} FLAG (INTACT): {playerIntactPercent}%
+            </p>
           </div>
         </div>
       </div>
 
-      {/* Bottom: Action Zone */}
-      <div className="relative z-20 px-4 pb-6 pt-2 sm:px-6">
-        {/* ACTION ZONE label */}
-        <p className="mb-2 text-center font-[family-name:var(--font-orbitron)] text-[10px] font-medium uppercase tracking-[0.25em] text-[#6b7280]">
+      {/* ACTION ZONE label */}
+      <div className="relative z-20 px-3 pt-1">
+        <p className="text-center font-[family-name:var(--font-orbitron)] text-[9px] font-medium uppercase tracking-[0.25em] text-[#6b7280]">
           Action Zone
         </p>
+      </div>
 
-        {/* Action bar panel */}
+      {/* Bottom: Action bar — tight */}
+      <div className="relative z-20 px-3 pb-3 pt-1 sm:px-4">
         <div
-          className="rounded-lg px-4 py-4"
+          className="rounded-lg px-3 py-2.5"
           style={{
-            backgroundColor: "#1e2128",
+            backgroundColor: "#1c1f27",
             borderTop: "1px solid #4a4f5a",
             borderLeft: "1px solid #4a4f5a",
             borderBottom: "2px solid #15181e",
             borderRight: "2px solid #15181e",
           }}
         >
-          {/* Row: Ammo | StopButton | TeamBadge */}
-          <div className="mx-auto flex w-full max-w-5xl items-center gap-3">
+          <div className="mx-auto flex w-full max-w-5xl items-center gap-2">
             <div className="shrink-0">
               <AmmoCounter count={bombsCount} maxBombs={MAX_BOMBS} />
             </div>
-
             <div className="flex-1">
               <StopButton
                 isRunning={isRunning}
@@ -460,7 +463,6 @@ export default function BattleView({ arena: initialArena }: BattleViewProps) {
                 onPress={handleButtonPress}
               />
             </div>
-
             <div className="shrink-0">
               <TeamBadge teamName={playerSide.name} teamColor={playerSide.color} />
             </div>

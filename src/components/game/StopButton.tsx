@@ -23,8 +23,8 @@ export default function StopButton({
   }[state];
 
   const gradientBg = {
-    idle: "linear-gradient(180deg, #4a4f5a 0%, #2a2d35 100%)",
-    running: "linear-gradient(180deg, #cc0000 0%, #990000 100%)",
+    idle: "linear-gradient(180deg, #cc0000 0%, #880000 100%)",
+    running: "linear-gradient(180deg, #ee0000 0%, #aa0000 100%)",
     disabled: "#1e2128",
   }[state];
 
@@ -37,16 +37,16 @@ export default function StopButton({
   // Beveled borders: lighter top-left, darker bottom-right
   const borderStyle = {
     idle: {
-      borderTop: "2px solid #4a4f5a",
-      borderLeft: "2px solid #4a4f5a",
-      borderBottom: "2px solid #15181e",
-      borderRight: "2px solid #15181e",
+      borderTop: "2px solid #e63333",
+      borderLeft: "2px solid #e63333",
+      borderBottom: "2px solid #550000",
+      borderRight: "2px solid #550000",
     },
     running: {
-      borderTop: "2px solid #ff3333",
-      borderLeft: "2px solid #ff3333",
-      borderBottom: "2px solid #660000",
-      borderRight: "2px solid #660000",
+      borderTop: "2px solid #ff4444",
+      borderLeft: "2px solid #ff4444",
+      borderBottom: "2px solid #770000",
+      borderRight: "2px solid #770000",
     },
     disabled: {
       borderTop: "2px solid #2a2d35",
@@ -66,15 +66,15 @@ export default function StopButton({
           : {
               scale: 0.95,
               // Reverse bevel on press for "pushed in" effect
-              borderTop: "2px solid #15181e",
-              borderLeft: "2px solid #15181e",
-              borderBottom: "2px solid #4a4f5a",
-              borderRight: "2px solid #4a4f5a",
+              borderTop: "2px solid #550000",
+              borderLeft: "2px solid #550000",
+              borderBottom: "2px solid #e63333",
+              borderRight: "2px solid #e63333",
             }
       }
       whileHover={disabled ? undefined : { scale: 1.03 }}
       className={`
-        relative w-full min-h-[72px] rounded-xl
+        relative w-full min-h-[60px] rounded-xl
         font-[family-name:var(--font-orbitron)] text-xl md:text-2xl font-extrabold
         uppercase tracking-[0.15em]
         select-none outline-none

@@ -78,9 +78,9 @@ export default function AmmoCounter({ count, maxBombs }: AmmoCounterProps) {
 
   return (
     <div
-      className="flex flex-col items-center gap-1 rounded-lg px-3 py-2"
+      className="flex flex-col items-center gap-1 rounded-lg px-2.5 py-1.5"
       style={{
-        backgroundColor: "#1e2128",
+        backgroundColor: "#1c1f27",
         borderTop: "2px solid #4a4f5a",
         borderLeft: "2px solid #4a4f5a",
         borderBottom: "2px solid #15181e",

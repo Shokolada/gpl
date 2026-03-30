@@ -41,9 +41,9 @@ export default function BattleBalance({
     <div className="w-full">
       {/* Sunken panel container — inset bevel */}
       <div
-        className="rounded-lg px-3 py-2.5"
+        className="rounded-lg px-2.5 py-1.5"
         style={{
-          backgroundColor: "#1e2128",
+          backgroundColor: "#1c1f27",
           borderTop: "2px solid #15181e",
           borderLeft: "2px solid #15181e",
           borderBottom: "2px solid #4a4f5a",
@@ -52,14 +52,14 @@ export default function BattleBalance({
       >
         {/* BATTLE BALANCE label */}
         <p
-          className="text-center mb-2 text-[9px] font-[family-name:var(--font-orbitron)] font-medium uppercase tracking-[0.2em]"
+          className="text-center mb-1 text-[9px] font-[family-name:var(--font-orbitron)] font-medium uppercase tracking-[0.2em]"
           style={{ color: "#6b7280" }}
         >
           BATTLE BALANCE
         </p>
 
         {/* Team names and percentages */}
-        <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center justify-between mb-1">
           <div className="flex items-center gap-2">
             <span
               className="text-[11px] font-[family-name:var(--font-orbitron)] font-semibold uppercase tracking-wider"

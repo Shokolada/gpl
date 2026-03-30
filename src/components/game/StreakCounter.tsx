@@ -33,7 +33,7 @@ export default function StreakCounter({
             ${isOnFire ? "animate-streak-fire" : ""}
           `}
           style={{
-            backgroundColor: "#1e2128",
+            backgroundColor: "#1c1f27",
             border: isOnFire
               ? "4px solid #ffcc00"
               : isCombo

@@ -212,7 +212,7 @@ export default function ResultModal({ result, onClose }: ResultModalProps) {
         <motion.div
           className="relative z-10 mx-4 flex w-full max-w-sm flex-col items-center overflow-hidden rounded-2xl p-8"
           style={{
-            backgroundColor: '#1e2128',
+            backgroundColor: '#1c1f27',
             borderTop: `2px solid ${config.borderColor}`,
             borderLeft: `2px solid ${config.borderColor}`,
             borderBottom: '2px solid #15181e',
@@ -348,7 +348,7 @@ export default function ResultModal({ result, onClose }: ResultModalProps) {
               <span
                 className="inline-flex items-center gap-1.5 rounded-lg px-5 py-1.5 font-[family-name:var(--font-orbitron)] text-sm font-bold tracking-wide"
                 style={{
-                  backgroundColor: '#1e2128',
+                  backgroundColor: '#1c1f27',
                   color: '#ffcc00',
                   border: '2px solid #ffcc00',
                 }}
