@@ -96,8 +96,9 @@ export default function PixelCanvas({
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    // Calculate pixel size based on container width
-    const gap = 1;
+    // Flag stripe mode: seamless pixels for smooth flag bands
+    const hasStripes = flagStripes && flagStripes.length > 0;
+    const gap = hasStripes ? 0 : 1;
     const pixelSize = Math.max(
       1,
       Math.floor((containerWidth - (cols - 1) * gap) / cols)
@@ -134,24 +135,25 @@ export default function PixelCanvas({
           // Removed/captured pixel - dark empty space
           ctx.fillStyle = "#1a1a1a";
           ctx.fillRect(x, y, pixelSize, pixelSize);
-        } else {
-          // Determine pixel color based on flag stripe position
-          let pixelColor = color;
-          let pixelSecondary = secondaryColor;
-          if (flagStripes && flagStripes.length > 0) {
-            const stripeIndex = Math.floor((row / rows) * flagStripes.length);
-            pixelColor = flagStripes[Math.min(stripeIndex, flagStripes.length - 1)];
-            // Darken for secondary
-            pixelSecondary = pixelColor + "99";
-          }
+        } else if (hasStripes) {
+          // Flag stripe mode: smooth solid colors, subtle 1px grid overlay
+          const stripeIndex = Math.floor((row / rows) * flagStripes.length);
+          const stripeColor = flagStripes[Math.min(stripeIndex, flagStripes.length - 1)];
+          ctx.fillStyle = stripeColor;
+          ctx.fillRect(x, y, pixelSize, pixelSize);
 
-          // Active pixel - draw with border for depth
-          ctx.fillStyle = pixelSecondary;
+          // Subtle dark grid line on right/bottom edge for pixel texture
+          ctx.fillStyle = "rgba(0,0,0,0.15)";
+          ctx.fillRect(x + pixelSize - 1, y, 1, pixelSize);
+          ctx.fillRect(x, y + pixelSize - 1, pixelSize, 1);
+        } else {
+          // Standard mode: border for depth
+          ctx.fillStyle = secondaryColor;
           ctx.fillRect(x, y, pixelSize, pixelSize);
 
           // Main fill (slightly inset for a subtle 3D look)
           const inset = Math.max(1, Math.floor(pixelSize * 0.15));
-          ctx.fillStyle = pixelColor;
+          ctx.fillStyle = color;
           ctx.fillRect(x, y, pixelSize - inset, pixelSize - inset);
         }
       }
