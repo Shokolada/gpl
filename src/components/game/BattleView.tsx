@@ -308,7 +308,7 @@ export default function BattleView({ arena: initialArena }: BattleViewProps) {
   return (
     <div className="relative flex h-screen flex-col bg-[#181b22] text-white overflow-hidden">
       {/* Top: Title — bold, large, NOT in a panel */}
-      <div className="relative z-20 px-3 pt-2">
+      <div className="relative z-20 px-3 pt-1">
         <h1
           className="text-center font-[family-name:var(--font-orbitron)] text-lg font-black uppercase tracking-[0.15em] text-white sm:text-xl md:text-2xl"
           style={{ textShadow: "0 2px 4px rgba(0,0,0,0.5)" }}
@@ -318,7 +318,7 @@ export default function BattleView({ arena: initialArena }: BattleViewProps) {
       </div>
 
       {/* Battle Balance + Back link */}
-      <div className="relative z-20 flex items-start gap-2 px-3 pt-1 pb-1 sm:px-4">
+      <div className="relative z-20 flex items-start gap-2 px-3 pt-0.5 pb-0.5 sm:px-4">
         <div className="flex-1">
           <BattleBalance
             sideAName={initialArena.sideA.name}
@@ -351,11 +351,11 @@ export default function BattleView({ arena: initialArena }: BattleViewProps) {
         />
 
         {/* 3-column grid: tight gaps */}
-        <div className="grid w-full max-w-5xl grid-cols-1 items-center gap-2 md:grid-cols-[1fr_auto_1fr] md:gap-3 lg:gap-4">
+        <div className="grid w-full max-w-5xl grid-cols-1 items-center gap-1 md:grid-cols-[1fr_auto_1fr] md:gap-2 lg:gap-3">
           {/* Left: Opponent map with capture overlay */}
           <div className="order-1 md:order-1">
             <div
-              className="relative rounded-lg p-1.5 overflow-hidden"
+              className="grid-texture relative rounded-lg p-1 overflow-hidden"
               style={{
                 backgroundColor: "#1c1f27",
                 borderTop: "1px solid #4a4f5a",
@@ -372,6 +372,7 @@ export default function BattleView({ arena: initialArena }: BattleViewProps) {
                 label={opponentSide.name}
                 className="w-full"
                 clipPolygon={opponentSide.clipPolygon}
+                flagStripes={opponentSide.flagStripes}
               />
               {/* Capture overlay text */}
               {playerCapturePercent > 0 && (
@@ -408,7 +409,7 @@ export default function BattleView({ arena: initialArena }: BattleViewProps) {
           {/* Right: Player map with flag info */}
           <div className="order-3 md:order-3">
             <div
-              className="relative rounded-lg p-1.5 overflow-hidden"
+              className="grid-texture relative rounded-lg p-1 overflow-hidden"
               style={{
                 backgroundColor: "#1c1f27",
                 borderTop: "1px solid #4a4f5a",
@@ -425,6 +426,7 @@ export default function BattleView({ arena: initialArena }: BattleViewProps) {
                 label={playerSide.name}
                 className="w-full"
                 clipPolygon={playerSide.clipPolygon}
+                flagStripes={playerSide.flagStripes}
               />
             </div>
             {/* Flag intact label */}
@@ -436,16 +438,16 @@ export default function BattleView({ arena: initialArena }: BattleViewProps) {
       </div>
 
       {/* ACTION ZONE label */}
-      <div className="relative z-20 px-3 pt-1">
+      <div className="relative z-20 px-3 pt-0.5">
         <p className="text-center font-[family-name:var(--font-orbitron)] text-[9px] font-medium uppercase tracking-[0.25em] text-[#6b7280]">
           Action Zone
         </p>
       </div>
 
       {/* Bottom: Action bar — tight */}
-      <div className="relative z-20 px-3 pb-3 pt-1 sm:px-4">
+      <div className="relative z-20 px-3 pb-2 pt-0.5 sm:px-4">
         <div
-          className="rounded-lg px-3 py-2.5"
+          className="rounded-lg px-3 py-2"
           style={{
             backgroundColor: "#1c1f27",
             borderTop: "1px solid #4a4f5a",
@@ -466,7 +468,7 @@ export default function BattleView({ arena: initialArena }: BattleViewProps) {
               />
             </div>
             <div className="shrink-0">
-              <TeamBadge teamName={playerSide.name} teamColor={playerSide.color} />
+              <TeamBadge teamName={playerSide.name} teamColor={playerSide.color} flagStripes={playerSide.flagStripes} />
             </div>
           </div>
         </div>

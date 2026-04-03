@@ -10,6 +10,7 @@ interface PixelCanvasProps {
   label: string;
   className?: string;
   clipPolygon?: string;
+  flagStripes?: string[];
 }
 
 /**
@@ -60,6 +61,7 @@ export default function PixelCanvas({
   label,
   className,
   clipPolygon,
+  flagStripes,
 }: PixelCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -133,19 +135,28 @@ export default function PixelCanvas({
           ctx.fillStyle = "#1a1a1a";
           ctx.fillRect(x, y, pixelSize, pixelSize);
         } else {
+          // Determine pixel color based on flag stripe position
+          let pixelColor = color;
+          let pixelSecondary = secondaryColor;
+          if (flagStripes && flagStripes.length > 0) {
+            const stripeIndex = Math.floor((row / rows) * flagStripes.length);
+            pixelColor = flagStripes[Math.min(stripeIndex, flagStripes.length - 1)];
+            // Darken for secondary
+            pixelSecondary = pixelColor + "99";
+          }
+
           // Active pixel - draw with border for depth
-          // Border/depth (secondary color)
-          ctx.fillStyle = secondaryColor;
+          ctx.fillStyle = pixelSecondary;
           ctx.fillRect(x, y, pixelSize, pixelSize);
 
           // Main fill (slightly inset for a subtle 3D look)
           const inset = Math.max(1, Math.floor(pixelSize * 0.15));
-          ctx.fillStyle = color;
+          ctx.fillStyle = pixelColor;
           ctx.fillRect(x, y, pixelSize - inset, pixelSize - inset);
         }
       }
     }
-  }, [totalPixels, capturedPixels, color, secondaryColor, cols, rows, containerWidth]);
+  }, [totalPixels, capturedPixels, color, secondaryColor, cols, rows, containerWidth, flagStripes]);
 
   // Redraw when dependencies change, using requestAnimationFrame
   useEffect(() => {

@@ -24,6 +24,7 @@ export interface ArenaSide {
   secondaryColor: string;
   silhouetteUrl?: string;
   clipPolygon?: string;
+  flagStripes?: string[];
 }
 
 export interface AttemptResult {
