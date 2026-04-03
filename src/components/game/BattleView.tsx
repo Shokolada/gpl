@@ -231,12 +231,13 @@ export default function BattleView({ arena: initialArena }: BattleViewProps) {
           </motion.div>
 
           <div className="flex w-full items-center gap-3 sm:gap-5">
+            {/* Side A Button */}
             <motion.button
-              className="group relative flex-1 overflow-hidden rounded-lg p-5 text-center transition-colors sm:p-7"
+              className="group relative flex-1 overflow-hidden rounded-xl p-5 text-center sm:p-7"
               style={{
                 backgroundColor: "#1c1f27",
-                borderTop: "1px solid #4a4f5a",
-                borderLeft: "1px solid #4a4f5a",
+                borderTop: "2px solid #4a4f5a",
+                borderLeft: "2px solid #4a4f5a",
                 borderBottom: "2px solid #15181e",
                 borderRight: "2px solid #15181e",
               }}
@@ -246,8 +247,17 @@ export default function BattleView({ arena: initialArena }: BattleViewProps) {
               whileTap={{ scale: 0.96 }}
               onClick={() => handleSelectTeam("side_a")}
             >
-              <div className="relative mx-auto mb-3 h-14 w-14 sm:h-16 sm:w-16">
-                <div className="absolute inset-0 rounded-full" style={{ backgroundColor: initialArena.sideA.color }} />
+              {/* Flag circle */}
+              <div className="relative mx-auto mb-3 h-16 w-16 overflow-hidden rounded-full border-2 border-white/20 sm:h-20 sm:w-20">
+                {initialArena.sideA.flagStripes && initialArena.sideA.flagStripes.length > 1 ? (
+                  <div className="flex flex-col w-full h-full">
+                    {initialArena.sideA.flagStripes.map((s, i) => (
+                      <div key={i} style={{ backgroundColor: s, flex: 1 }} />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="w-full h-full" style={{ backgroundColor: initialArena.sideA.color }} />
+                )}
               </div>
               <p className="relative font-[family-name:var(--font-orbitron)] text-lg font-bold text-white sm:text-xl">
                 {initialArena.sideA.name}
@@ -255,7 +265,7 @@ export default function BattleView({ arena: initialArena }: BattleViewProps) {
             </motion.button>
 
             <motion.span
-              className="shrink-0 font-[family-name:var(--font-orbitron)] text-2xl font-black text-[#6b7280] sm:text-3xl"
+              className="shrink-0 font-[family-name:var(--font-orbitron)] text-2xl font-black text-[#4a4f5a] sm:text-3xl"
               initial={{ opacity: 0, scale: 0.5 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.4 }}
@@ -263,12 +273,13 @@ export default function BattleView({ arena: initialArena }: BattleViewProps) {
               VS
             </motion.span>
 
+            {/* Side B Button */}
             <motion.button
-              className="group relative flex-1 overflow-hidden rounded-lg p-5 text-center transition-colors sm:p-7"
+              className="group relative flex-1 overflow-hidden rounded-xl p-5 text-center sm:p-7"
               style={{
                 backgroundColor: "#1c1f27",
-                borderTop: "1px solid #4a4f5a",
-                borderLeft: "1px solid #4a4f5a",
+                borderTop: "2px solid #4a4f5a",
+                borderLeft: "2px solid #4a4f5a",
                 borderBottom: "2px solid #15181e",
                 borderRight: "2px solid #15181e",
               }}
@@ -278,8 +289,17 @@ export default function BattleView({ arena: initialArena }: BattleViewProps) {
               whileTap={{ scale: 0.96 }}
               onClick={() => handleSelectTeam("side_b")}
             >
-              <div className="relative mx-auto mb-3 h-14 w-14 sm:h-16 sm:w-16">
-                <div className="absolute inset-0 rounded-full" style={{ backgroundColor: initialArena.sideB.color }} />
+              {/* Flag circle */}
+              <div className="relative mx-auto mb-3 h-16 w-16 overflow-hidden rounded-full border-2 border-white/20 sm:h-20 sm:w-20">
+                {initialArena.sideB.flagStripes && initialArena.sideB.flagStripes.length > 1 ? (
+                  <div className="flex flex-col w-full h-full">
+                    {initialArena.sideB.flagStripes.map((s, i) => (
+                      <div key={i} style={{ backgroundColor: s, flex: 1 }} />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="w-full h-full" style={{ backgroundColor: initialArena.sideB.color }} />
+                )}
               </div>
               <p className="relative font-[family-name:var(--font-orbitron)] text-lg font-bold text-white sm:text-xl">
                 {initialArena.sideB.name}
@@ -303,43 +323,44 @@ export default function BattleView({ arena: initialArena }: BattleViewProps) {
     : 100;
 
   // ══════════════════════════════════════════════
-  // MAIN BATTLE SCREEN
+  // MAIN BATTLE SCREEN — Mobile Portrait Primary
+  // Uses dvh for true viewport fit on mobile
   // ══════════════════════════════════════════════
   return (
-    <div className="relative flex h-screen flex-col bg-[#181b22] text-white overflow-hidden">
-      {/* Top: Title — bold, large, NOT in a panel */}
-      <div className="relative z-20 px-3 pt-1">
-        <h1
-          className="text-center font-[family-name:var(--font-orbitron)] text-lg font-black uppercase tracking-[0.15em] text-white sm:text-xl md:text-2xl"
-          style={{ textShadow: "0 2px 4px rgba(0,0,0,0.5)" }}
-        >
-          Global Precision League
-        </h1>
-      </div>
-
-      {/* Battle Balance + Back link */}
-      <div className="relative z-20 flex items-start gap-2 px-3 pt-0.5 pb-0.5 sm:px-4">
-        <div className="flex-1">
-          <BattleBalance
-            sideAName={initialArena.sideA.name}
-            sideBName={initialArena.sideB.name}
-            sideAColor={initialArena.sideA.color}
-            sideBColor={initialArena.sideB.color}
-            sideACaptured={sideACaptured}
-            sideBCaptured={sideBCaptured}
-            totalPixels={initialArena.totalPixels}
-          />
+    <div className="relative flex h-dvh flex-col bg-[#181b22] text-white overflow-hidden">
+      {/* ── Header: Title + Battle Balance ── */}
+      <div className="relative z-20 shrink-0 px-3 pt-2 pb-1 sm:px-4">
+        {/* Title row with back link */}
+        <div className="flex items-center justify-between mb-1">
+          <a
+            href="/"
+            className="shrink-0 font-[family-name:var(--font-jetbrains)] text-[10px] text-[#6b7280] transition-colors hover:text-white"
+          >
+            &larr; arenas
+          </a>
+          <h1
+            className="text-center font-[family-name:var(--font-orbitron)] text-sm font-black uppercase tracking-[0.1em] text-white sm:text-lg md:text-xl"
+            style={{ textShadow: "0 2px 4px rgba(0,0,0,0.5)" }}
+          >
+            Global Precision League
+          </h1>
+          <div className="w-10" /> {/* Spacer for centering */}
         </div>
-        <a
-          href="/"
-          className="mt-1 shrink-0 font-[family-name:var(--font-jetbrains)] text-[10px] text-[#6b7280] transition-colors hover:text-white"
-        >
-          &larr; arenas
-        </a>
+
+        {/* Battle Balance */}
+        <BattleBalance
+          sideAName={initialArena.sideA.name}
+          sideBName={initialArena.sideB.name}
+          sideAColor={initialArena.sideA.color}
+          sideBColor={initialArena.sideB.color}
+          sideACaptured={sideACaptured}
+          sideBCaptured={sideBCaptured}
+          totalPixels={initialArena.totalPixels}
+        />
       </div>
 
-      {/* Main area: Maps + Stopwatch — fills remaining space */}
-      <div className="relative z-20 flex flex-1 flex-col items-center justify-center px-2 sm:px-3">
+      {/* ── Main Content: Maps + Stopwatch — fills remaining space ── */}
+      <div className="relative z-20 flex flex-1 flex-col items-center justify-center px-2 min-h-0 sm:px-3">
         {/* Siphon animation overlay */}
         <PixelSiphon
           isActive={showSiphon}
@@ -350,19 +371,12 @@ export default function BattleView({ arena: initialArena }: BattleViewProps) {
           onComplete={handleSiphonComplete}
         />
 
-        {/* 3-column grid: tight gaps */}
-        <div className="grid w-full max-w-5xl grid-cols-1 items-center gap-1 md:grid-cols-[1fr_auto_1fr] md:gap-2 lg:gap-3">
-          {/* Left: Opponent map with capture overlay */}
-          <div className="order-1 md:order-1">
+        {/* Mobile Portrait: stacked vertically | Desktop: 3-column grid */}
+        <div className="grid w-full max-w-5xl grid-cols-1 items-center gap-1 md:grid-cols-[1fr_auto_1fr] md:gap-3">
+          {/* Opponent Map (top on mobile, left on desktop) */}
+          <div className="order-1">
             <div
-              className="grid-texture relative rounded-lg p-1 overflow-hidden"
-              style={{
-                backgroundColor: "#1c1f27",
-                borderTop: "1px solid #4a4f5a",
-                borderLeft: "1px solid #4a4f5a",
-                borderBottom: "2px solid #15181e",
-                borderRight: "2px solid #15181e",
-              }}
+              className="panel-raised grid-texture relative rounded-lg p-1 overflow-hidden"
             >
               <PixelCanvas
                 totalPixels={initialArena.totalPixels}
@@ -378,7 +392,7 @@ export default function BattleView({ arena: initialArena }: BattleViewProps) {
               {playerCapturePercent > 0 && (
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                   <p
-                    className="text-center font-[family-name:var(--font-orbitron)] text-sm font-black uppercase leading-tight text-white sm:text-base md:text-lg"
+                    className="text-center font-[family-name:var(--font-orbitron)] text-xs font-black uppercase leading-tight text-white sm:text-sm md:text-lg"
                     style={{
                       textShadow: "0 0 8px rgba(0,0,0,0.9), 0 0 16px rgba(0,0,0,0.7), 0 2px 4px rgba(0,0,0,0.8)",
                     }}
@@ -389,15 +403,14 @@ export default function BattleView({ arena: initialArena }: BattleViewProps) {
                 </div>
               )}
             </div>
-            {/* Flag intact label */}
-            <p className="mt-1 text-center font-[family-name:var(--font-orbitron)] text-[9px] font-medium uppercase tracking-wider text-[#6b7280]">
+            <p className="mt-0.5 text-center font-[family-name:var(--font-orbitron)] text-[8px] font-medium uppercase tracking-wider text-[#6b7280] sm:text-[9px]">
               {opponentSide.name} FLAG (INTACT): {opponentIntactPercent}%
             </p>
           </div>
 
-          {/* Center: Streak + Bomb/Timer */}
-          <div className="order-2 flex flex-col items-center gap-1 md:order-2">
-            <div className="flex h-8 items-center">
+          {/* Streak + Bomb/Timer (center) */}
+          <div className="order-2 flex flex-col items-center gap-0">
+            <div className="flex h-7 items-center">
               <StreakCounter
                 streak={streak}
                 multiplier={getStreakMultiplier(streak)}
@@ -406,17 +419,10 @@ export default function BattleView({ arena: initialArena }: BattleViewProps) {
             <BombStopwatch time={time} isRunning={isRunning} />
           </div>
 
-          {/* Right: Player map with flag info */}
-          <div className="order-3 md:order-3">
+          {/* Player Map (bottom on mobile, right on desktop) */}
+          <div className="order-3">
             <div
-              className="grid-texture relative rounded-lg p-1 overflow-hidden"
-              style={{
-                backgroundColor: "#1c1f27",
-                borderTop: "1px solid #4a4f5a",
-                borderLeft: "1px solid #4a4f5a",
-                borderBottom: "2px solid #15181e",
-                borderRight: "2px solid #15181e",
-              }}
+              className="panel-raised grid-texture relative rounded-lg p-1 overflow-hidden"
             >
               <PixelCanvas
                 totalPixels={initialArena.totalPixels}
@@ -429,32 +435,28 @@ export default function BattleView({ arena: initialArena }: BattleViewProps) {
                 flagStripes={playerSide.flagStripes}
               />
             </div>
-            {/* Flag intact label */}
-            <p className="mt-1 text-center font-[family-name:var(--font-orbitron)] text-[9px] font-medium uppercase tracking-wider text-[#6b7280]">
+            <p className="mt-0.5 text-center font-[family-name:var(--font-orbitron)] text-[8px] font-medium uppercase tracking-wider text-[#6b7280] sm:text-[9px]">
               {playerSide.name} FLAG (INTACT): {playerIntactPercent}%
             </p>
           </div>
         </div>
       </div>
 
-      {/* ACTION ZONE label */}
-      <div className="relative z-20 px-3 pt-0.5">
-        <p className="text-center font-[family-name:var(--font-orbitron)] text-[9px] font-medium uppercase tracking-[0.25em] text-[#6b7280]">
-          Action Zone
-        </p>
+      {/* ── ACTION ZONE divider ── */}
+      <div className="relative z-20 px-3 py-0.5 shrink-0">
+        <div className="mx-auto flex items-center justify-center gap-2">
+          <div className="h-px w-8 bg-[#4a4f5a]" />
+          <p className="text-center font-[family-name:var(--font-orbitron)] text-[8px] font-medium uppercase tracking-[0.25em] text-[#6b7280]">
+            Action Zone
+          </p>
+          <div className="h-px w-8 bg-[#4a4f5a]" />
+        </div>
       </div>
 
-      {/* Bottom: Action bar — tight */}
-      <div className="relative z-20 px-3 pb-2 pt-0.5 sm:px-4">
+      {/* ── Bottom Action Bar — fixed, always visible, thumb-accessible ── */}
+      <div className="relative z-20 shrink-0 px-3 pb-2 safe-bottom sm:px-4">
         <div
-          className="rounded-lg px-3 py-2"
-          style={{
-            backgroundColor: "#1c1f27",
-            borderTop: "1px solid #4a4f5a",
-            borderLeft: "1px solid #4a4f5a",
-            borderBottom: "2px solid #15181e",
-            borderRight: "2px solid #15181e",
-          }}
+          className="panel-raised rounded-xl px-3 py-2"
         >
           <div className="mx-auto flex w-full max-w-5xl items-center gap-2">
             <div className="shrink-0">

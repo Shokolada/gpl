@@ -17,15 +17,15 @@ const TABS: { label: string; value: FilterTab; icon: string }[] = [
 
 const CATEGORY_STYLES: Record<ArenaCategory, { badge: string; color: string }> = {
   geopolitical: {
-    badge: 'text-[#ff6b6b]',
+    badge: 'text-[#ff6b6b] bg-[#ff6b6b]/10',
     color: '#ff6b6b',
   },
   sports: {
-    badge: 'text-[#66cc88]',
+    badge: 'text-[#66cc88] bg-[#66cc88]/10',
     color: '#66cc88',
   },
   culture: {
-    badge: 'text-[#8888cc]',
+    badge: 'text-[#8888cc] bg-[#8888cc]/10',
     color: '#8888cc',
   },
 };
@@ -49,30 +49,40 @@ export default function HomePage() {
 
   return (
     <main className="relative min-h-screen overflow-hidden">
-      <div className="relative z-10 mx-auto max-w-6xl px-4 py-12 sm:py-16">
+      <div className="relative z-10 mx-auto max-w-6xl px-4 py-10 sm:py-16">
         {/* ── Hero Section ────────────────────────────── */}
         <motion.div
           initial={{ opacity: 0, y: -30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: 'easeOut' }}
-          className="mb-16 text-center"
+          className="mb-12 text-center sm:mb-16"
         >
           {/* Title */}
           <h1
-            className="mb-3 font-[family-name:var(--font-orbitron)] text-5xl font-black tracking-tight text-white sm:text-6xl md:text-7xl"
+            className="mb-2 font-[family-name:var(--font-orbitron)] text-4xl font-black tracking-tight text-white sm:text-5xl md:text-7xl"
             style={{
-              textShadow: '0 2px 4px rgba(0,0,0,0.5)',
+              textShadow: '0 2px 8px rgba(0,0,0,0.6), 0 0 40px rgba(204,0,0,0.15)',
             }}
           >
             GLOBAL PRECISION LEAGUE
           </h1>
 
+          {/* Tagline */}
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3, duration: 0.6 }}
+            className="mb-6 font-[family-name:var(--font-orbitron)] text-sm font-medium tracking-[0.2em] text-[#ffcc00]/70 uppercase sm:text-base"
+          >
+            Stop the bomb. Conquer the map.
+          </motion.p>
+
           {/* Military-style divider */}
-          <div className="mx-auto mt-6 mb-8 flex items-center justify-center gap-3">
+          <div className="mx-auto flex items-center justify-center gap-3">
             <div className="h-px w-16 bg-[#4a4f5a]" />
-            <div className="h-1.5 w-1.5 rotate-45 bg-[#4a4f5a]" />
+            <div className="h-1.5 w-1.5 rotate-45 bg-[#ffcc00]/40" />
             <div className="h-px w-24 bg-[#4a4f5a]" />
-            <div className="h-1.5 w-1.5 rotate-45 bg-[#4a4f5a]" />
+            <div className="h-1.5 w-1.5 rotate-45 bg-[#ffcc00]/40" />
             <div className="h-px w-16 bg-[#4a4f5a]" />
           </div>
 
@@ -81,50 +91,52 @@ export default function HomePage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5, duration: 0.6 }}
-            className="font-[family-name:var(--font-orbitron)] text-lg font-semibold tracking-widest text-[#6b7280] uppercase sm:text-xl"
+            className="mt-6 font-[family-name:var(--font-orbitron)] text-xs font-semibold tracking-widest text-[#6b7280] uppercase sm:text-sm"
           >
             Choose Your Arena
           </motion.p>
         </motion.div>
 
-        {/* ── Category Tabs ───────────────────────────── */}
+        {/* ── Category Tabs — horizontally scrollable on mobile ── */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3, duration: 0.5 }}
-          className="mb-10 flex flex-wrap justify-center gap-2 sm:gap-3"
+          className="mb-8 sm:mb-10"
         >
-          {TABS.map((tab) => {
-            const isActive = activeTab === tab.value;
-            return (
-              <button
-                key={tab.value}
-                onClick={() => setActiveTab(tab.value)}
-                className={`panel relative rounded-lg px-4 py-2.5 font-[family-name:var(--font-orbitron)] text-xs font-semibold tracking-wider uppercase transition-all duration-300 sm:px-5 sm:text-sm ${
-                  isActive
-                    ? 'text-white'
-                    : 'text-[#6b7280] hover:text-white/70'
-                }`}
-              >
-                <span className="mr-1.5">{tab.icon}</span>
-                {tab.label}
-                {/* Active indicator bar */}
-                {isActive && (
-                  <motion.div
-                    layoutId="activeTab"
-                    className="absolute -bottom-px left-2 right-2 h-[2px] rounded-full bg-[#ffcc00]"
-                    transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                  />
-                )}
-              </button>
-            );
-          })}
+          <div className="hide-scrollbar flex gap-2 overflow-x-auto pb-2 sm:justify-center sm:gap-3">
+            {TABS.map((tab) => {
+              const isActive = activeTab === tab.value;
+              return (
+                <button
+                  key={tab.value}
+                  onClick={() => setActiveTab(tab.value)}
+                  className={`panel relative shrink-0 rounded-lg px-4 py-2.5 font-[family-name:var(--font-orbitron)] text-[11px] font-semibold tracking-wider uppercase transition-all duration-300 sm:px-5 sm:text-sm ${
+                    isActive
+                      ? 'text-white'
+                      : 'text-[#6b7280] hover:text-white/70'
+                  }`}
+                >
+                  <span className="mr-1.5">{tab.icon}</span>
+                  {tab.label}
+                  {/* Active indicator bar */}
+                  {isActive && (
+                    <motion.div
+                      layoutId="activeTab"
+                      className="absolute -bottom-px left-2 right-2 h-[2px] rounded-full bg-[#ffcc00]"
+                      transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                    />
+                  )}
+                </button>
+              );
+            })}
+          </div>
         </motion.div>
 
         {/* ── Arena Grid ──────────────────────────────── */}
         <motion.div
           layout
-          className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3"
+          className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3"
         >
           {filtered.map((arena, index) => {
             const totalCaptured = arena.sideACaptured + arena.sideBCaptured;
@@ -162,11 +174,11 @@ export default function HomePage() {
                   />
 
                   {/* Card body */}
-                  <div className="flex flex-1 flex-col gap-4 p-5 pl-5">
+                  <div className="flex flex-1 flex-col gap-3 p-4 pl-4 sm:gap-4 sm:p-5">
                     {/* Top row: badge + player count */}
                     <div className="flex items-center justify-between">
                       <span
-                        className={`rounded-full bg-[#0a0c10] px-2.5 py-0.5 text-[10px] font-bold tracking-wider uppercase ${catStyle.badge}`}
+                        className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold tracking-wider uppercase ${catStyle.badge}`}
                       >
                         {arena.category}
                       </span>
@@ -181,23 +193,51 @@ export default function HomePage() {
                       {arena.name}
                     </h2>
 
-                    {/* VS Divider */}
+                    {/* Teams row with flag circles */}
                     <div className="flex items-center gap-3">
-                      <span
-                        className="text-xs font-bold tracking-wide"
-                        style={{ color: arena.sideA.color }}
-                      >
-                        {arena.sideA.name}
-                      </span>
+                      <div className="flex items-center gap-1.5">
+                        <div
+                          className="h-3.5 w-3.5 rounded-full overflow-hidden border border-white/20"
+                          style={{ backgroundColor: arena.sideA.color }}
+                        >
+                          {arena.sideA.flagStripes && arena.sideA.flagStripes.length > 1 && (
+                            <div className="flex flex-col w-full h-full">
+                              {arena.sideA.flagStripes.map((s, i) => (
+                                <div key={i} style={{ backgroundColor: s, flex: 1 }} />
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                        <span
+                          className="text-xs font-bold tracking-wide"
+                          style={{ color: arena.sideA.color }}
+                        >
+                          {arena.sideA.name}
+                        </span>
+                      </div>
                       <span className="font-[family-name:var(--font-orbitron)] text-[10px] font-black text-[#4a4f5a]">
                         VS
                       </span>
-                      <span
-                        className="text-xs font-bold tracking-wide"
-                        style={{ color: arena.sideB.color }}
-                      >
-                        {arena.sideB.name}
-                      </span>
+                      <div className="flex items-center gap-1.5">
+                        <span
+                          className="text-xs font-bold tracking-wide"
+                          style={{ color: arena.sideB.color }}
+                        >
+                          {arena.sideB.name}
+                        </span>
+                        <div
+                          className="h-3.5 w-3.5 rounded-full overflow-hidden border border-white/20"
+                          style={{ backgroundColor: arena.sideB.color }}
+                        >
+                          {arena.sideB.flagStripes && arena.sideB.flagStripes.length > 1 && (
+                            <div className="flex flex-col w-full h-full">
+                              {arena.sideB.flagStripes.map((s, i) => (
+                                <div key={i} style={{ backgroundColor: s, flex: 1 }} />
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </div>
                     </div>
 
                     {/* Progress bar */}
@@ -232,9 +272,9 @@ export default function HomePage() {
                       </div>
                     </div>
 
-                    {/* Enter button */}
+                    {/* Enter button — large touch target */}
                     <div
-                      className="mt-1 rounded-lg py-2 text-center font-[family-name:var(--font-orbitron)] text-xs font-bold tracking-widest text-white uppercase transition-all duration-300 group-hover:brightness-110"
+                      className="mt-1 rounded-lg py-2.5 text-center font-[family-name:var(--font-orbitron)] text-xs font-bold tracking-widest text-white uppercase transition-all duration-300 group-hover:brightness-110 sm:py-2"
                       style={{
                         backgroundColor: '#cc0000',
                         borderTop: '1px solid #e63333',
@@ -257,15 +297,15 @@ export default function HomePage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1, duration: 0.8 }}
-          className="mt-20 text-center"
+          className="mt-16 text-center sm:mt-20"
         >
           <div className="mx-auto mb-4 flex items-center justify-center gap-3">
             <div className="h-px w-12 bg-[#4a4f5a]" />
             <div className="h-1 w-1 rotate-45 bg-[#4a4f5a]" />
             <div className="h-px w-12 bg-[#4a4f5a]" />
           </div>
-          <p className="font-[family-name:var(--font-orbitron)] text-xs font-medium tracking-[0.2em] text-[#6b7280] uppercase">
-            Stop the bomb. Conquer the map.
+          <p className="font-[family-name:var(--font-orbitron)] text-[10px] font-medium tracking-[0.2em] text-[#6b7280]/60 uppercase">
+            Global Precision League
           </p>
         </motion.footer>
       </div>

@@ -14,8 +14,8 @@ function BombIcon({
 }) {
   return (
     <svg
-      width="16"
-      height="16"
+      width="14"
+      height="14"
       viewBox="0 0 16 16"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -78,14 +78,7 @@ export default function AmmoCounter({ count, maxBombs }: AmmoCounterProps) {
 
   return (
     <div
-      className="flex flex-col items-center gap-1 rounded-lg px-2.5 py-1.5"
-      style={{
-        backgroundColor: "#1c1f27",
-        borderTop: "2px solid #4a4f5a",
-        borderLeft: "2px solid #4a4f5a",
-        borderBottom: "2px solid #15181e",
-        borderRight: "2px solid #15181e",
-      }}
+      className="panel-raised flex flex-col items-center gap-0.5 rounded-lg px-2 py-1.5 sm:gap-1 sm:px-2.5"
     >
       {empty ? (
         <span
@@ -96,8 +89,8 @@ export default function AmmoCounter({ count, maxBombs }: AmmoCounterProps) {
         </span>
       ) : (
         <>
-          <div className="flex items-center gap-1">
-            <div className="flex items-center gap-0.5">
+          <div className="flex items-center gap-0.5">
+            <div className="flex items-center gap-px">
               {Array.from({ length: maxBombs }, (_, i) => (
                 <BombIcon
                   key={i}
@@ -109,7 +102,7 @@ export default function AmmoCounter({ count, maxBombs }: AmmoCounterProps) {
 
             {/* Counter text */}
             <span
-              className="text-xs font-[family-name:var(--font-jetbrains)] font-bold"
+              className="ml-0.5 text-[11px] font-[family-name:var(--font-jetbrains)] font-bold"
               style={{ color: lowAmmo ? "#cc0000" : "#ffffff" }}
             >
               x{count}
@@ -118,10 +111,10 @@ export default function AmmoCounter({ count, maxBombs }: AmmoCounterProps) {
 
           {/* Label */}
           <span
-            className="text-[8px] font-[family-name:var(--font-orbitron)] font-medium uppercase tracking-wider"
+            className="text-[7px] font-[family-name:var(--font-orbitron)] font-medium uppercase tracking-wider sm:text-[8px]"
             style={{ color: "#6b7280" }}
           >
-            Ammo for the day
+            Ammo
           </span>
         </>
       )}

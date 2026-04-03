@@ -17,6 +17,7 @@ const resultConfig: Record<
     color: string;
     textColorClass: string;
     borderColor: string;
+    bgGlow: string;
   }
 > = {
   perfect: {
@@ -25,12 +26,14 @@ const resultConfig: Record<
     color: '#ffcc00',
     textColorClass: 'text-[#ffcc00]',
     borderColor: '#ffcc00',
+    bgGlow: 'radial-gradient(ellipse at center, rgba(255,204,0,0.06) 0%, transparent 70%)',
   },
   success: {
     title: 'SUCCESS!',
     color: '#009933',
     textColorClass: 'text-[#009933]',
     borderColor: '#009933',
+    bgGlow: 'radial-gradient(ellipse at center, rgba(0,153,51,0.06) 0%, transparent 70%)',
   },
   early: {
     title: 'TOO EARLY',
@@ -38,12 +41,14 @@ const resultConfig: Record<
     color: '#0066cc',
     textColorClass: 'text-[#0066cc]',
     borderColor: '#0066cc',
+    bgGlow: 'radial-gradient(ellipse at center, rgba(0,102,204,0.06) 0%, transparent 70%)',
   },
   miss: {
     title: 'MISS!',
     color: '#cc0000',
     textColorClass: 'text-[#cc0000]',
     borderColor: '#cc0000',
+    bgGlow: 'radial-gradient(ellipse at center, rgba(204,0,0,0.08) 0%, transparent 70%)',
   },
 };
 
@@ -193,13 +198,13 @@ export default function ResultModal({ result, onClose }: ResultModalProps) {
   return (
     <AnimatePresence>
       <motion.div
-        className="fixed inset-0 z-50 flex items-center justify-center"
+        className="fixed inset-0 z-50 flex items-end justify-center sm:items-center"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.25 }}
       >
-        {/* Backdrop — dark overlay with reduced blur */}
+        {/* Backdrop — dark overlay */}
         <motion.div
           className="absolute inset-0 bg-black/80 backdrop-blur-md"
           onClick={onClose}
@@ -208,11 +213,12 @@ export default function ResultModal({ result, onClose }: ResultModalProps) {
           transition={{ duration: 0.3 }}
         />
 
-        {/* Modal Card — dark panel, beveled, no glass/blur/radial */}
+        {/* Modal Card */}
         <motion.div
-          className="relative z-10 mx-4 flex w-full max-w-sm flex-col items-center overflow-hidden rounded-2xl p-8"
+          className="relative z-10 mx-3 mb-3 flex w-full max-w-sm flex-col items-center overflow-hidden rounded-2xl p-6 sm:mx-4 sm:mb-0 sm:p-8"
           style={{
             backgroundColor: '#1c1f27',
+            backgroundImage: config.bgGlow,
             borderTop: `2px solid ${config.borderColor}`,
             borderLeft: `2px solid ${config.borderColor}`,
             borderBottom: '2px solid #15181e',
@@ -250,7 +256,7 @@ export default function ResultModal({ result, onClose }: ResultModalProps) {
 
           {/* Result Title */}
           <motion.h2
-            className={`relative z-10 font-[family-name:var(--font-orbitron)] text-5xl font-black tracking-wider ${config.textColorClass}`}
+            className={`relative z-10 font-[family-name:var(--font-orbitron)] text-4xl font-black tracking-wider sm:text-5xl ${config.textColorClass}`}
             initial={{ scale: 0.3, opacity: 0 }}
             animate={
               isPerfect
@@ -270,7 +276,7 @@ export default function ResultModal({ result, onClose }: ResultModalProps) {
           {/* Subtitle */}
           {config.subtitle && (
             <motion.p
-              className={`relative z-10 mt-2 font-[family-name:var(--font-orbitron)] text-sm font-medium tracking-widest uppercase ${
+              className={`relative z-10 mt-2 font-[family-name:var(--font-orbitron)] text-xs font-medium tracking-widest uppercase sm:text-sm ${
                 isPerfect ? 'text-[#ffcc00]/70' : 'text-[#6b7280]'
               }`}
               initial={{ opacity: 0, y: 8 }}
@@ -295,7 +301,7 @@ export default function ResultModal({ result, onClose }: ResultModalProps) {
 
           {/* Time Stopped */}
           <motion.div
-            className="relative z-10 mt-6 text-center"
+            className="relative z-10 mt-5 text-center sm:mt-6"
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
@@ -306,9 +312,9 @@ export default function ResultModal({ result, onClose }: ResultModalProps) {
             >
               Time Stopped
             </p>
-            <p className="mt-1 font-[family-name:var(--font-jetbrains)] text-4xl font-bold text-white">
+            <p className="mt-1 font-[family-name:var(--font-jetbrains)] text-3xl font-bold text-white sm:text-4xl">
               {result.timeStopped.toFixed(3)}
-              <span className="text-xl" style={{ color: '#6b7280' }}>
+              <span className="text-lg sm:text-xl" style={{ color: '#6b7280' }}>
                 s
               </span>
             </p>
@@ -317,7 +323,7 @@ export default function ResultModal({ result, onClose }: ResultModalProps) {
           {/* Pixels Earned */}
           {result.pixelsEarned > 0 && (
             <motion.div
-              className="relative z-10 mt-5"
+              className="relative z-10 mt-4 sm:mt-5"
               initial={{ opacity: 0, scale: 0.4 }}
               animate={{ opacity: 1, scale: [0.4, 1.2, 1] }}
               transition={{
@@ -328,7 +334,7 @@ export default function ResultModal({ result, onClose }: ResultModalProps) {
               }}
             >
               <span
-                className={`font-[family-name:var(--font-orbitron)] text-2xl font-black ${
+                className={`font-[family-name:var(--font-orbitron)] text-xl font-black sm:text-2xl ${
                   isPerfect ? 'text-[#ffcc00]' : 'text-white'
                 }`}
               >
@@ -340,13 +346,13 @@ export default function ResultModal({ result, onClose }: ResultModalProps) {
           {/* Streak Badge — gold border panel */}
           {result.streakCount > 1 && (
             <motion.div
-              className="relative z-10 mt-4"
+              className="relative z-10 mt-3 sm:mt-4"
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.5 }}
             >
               <span
-                className="inline-flex items-center gap-1.5 rounded-lg px-5 py-1.5 font-[family-name:var(--font-orbitron)] text-sm font-bold tracking-wide"
+                className="inline-flex items-center gap-1.5 rounded-lg px-4 py-1 font-[family-name:var(--font-orbitron)] text-xs font-bold tracking-wide sm:px-5 sm:py-1.5 sm:text-sm"
                 style={{
                   backgroundColor: '#1c1f27',
                   color: '#ffcc00',
@@ -358,14 +364,14 @@ export default function ResultModal({ result, onClose }: ResultModalProps) {
             </motion.div>
           )}
 
-          {/* Continue Button — steel gray beveled */}
+          {/* Continue Button — large, bottom-positioned for thumb reach */}
           <motion.button
-            className="relative z-10 mt-8 w-full rounded-xl px-8 py-3.5 font-[family-name:var(--font-orbitron)] text-base font-semibold tracking-wide text-white transition-all cursor-pointer"
+            className="relative z-10 mt-6 w-full rounded-xl px-8 py-3.5 font-[family-name:var(--font-orbitron)] text-base font-semibold tracking-wide text-white transition-all cursor-pointer sm:mt-8"
             style={{
               background: 'linear-gradient(180deg, #4a4f5a 0%, #2a2d35 100%)',
-              borderTop: '2px solid #4a4f5a',
-              borderLeft: '2px solid #4a4f5a',
-              borderBottom: '2px solid #15181e',
+              borderTop: '2px solid #5a5f6a',
+              borderLeft: '2px solid #5a5f6a',
+              borderBottom: '3px solid #15181e',
               borderRight: '2px solid #15181e',
             }}
             onClick={onClose}

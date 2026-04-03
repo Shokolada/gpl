@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Orbitron, JetBrains_Mono, Inter } from "next/font/google";
 import "./globals.css";
 
@@ -21,6 +21,20 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "GPL — Global Precision League",
   description: "Competitive precision timing game. Stop the bomb at exactly 10.000 seconds. Conquer the map.",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "GPL",
+  },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: "cover",
+  themeColor: "#181b22",
 };
 
 export default function RootLayout({

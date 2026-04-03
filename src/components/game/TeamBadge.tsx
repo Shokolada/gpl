@@ -7,30 +7,22 @@ interface TeamBadgeProps {
 export default function TeamBadge({ teamName, teamColor, flagStripes }: TeamBadgeProps) {
   return (
     <div
-      className="flex flex-col items-center gap-1 rounded-lg px-2.5 py-1.5"
-      style={{
-        backgroundColor: "#1c1f27",
-        borderTop: "2px solid #4a4f5a",
-        borderLeft: "2px solid #4a4f5a",
-        borderBottom: "2px solid #15181e",
-        borderRight: "2px solid #15181e",
-      }}
+      className="panel-raised flex flex-col items-center gap-0.5 rounded-lg px-2 py-1.5 sm:gap-1 sm:px-2.5"
     >
       {/* TEAM label */}
       <span
-        className="text-[8px] font-[family-name:var(--font-orbitron)] font-medium uppercase tracking-[0.2em]"
+        className="text-[7px] font-[family-name:var(--font-orbitron)] font-medium uppercase tracking-[0.2em] sm:text-[8px]"
         style={{ color: "#6b7280" }}
       >
         TEAM
       </span>
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1.5">
         {/* Team color circle with flag stripes */}
         <div
-          className="w-4 h-4 rounded-full border-2 overflow-hidden"
+          className="w-4 h-4 rounded-full border border-white/20 overflow-hidden"
           style={{
             backgroundColor: teamColor,
-            borderColor: "rgba(255, 255, 255, 0.2)",
           }}
         >
           {flagStripes && flagStripes.length > 1 && (
@@ -49,8 +41,8 @@ export default function TeamBadge({ teamName, teamColor, flagStripes }: TeamBadg
           )}
         </div>
 
-        {/* Team name */}
-        <span className="text-sm font-bold text-white tracking-wide">
+        {/* Team name — truncated for long names */}
+        <span className="text-[11px] font-bold text-white tracking-wide max-w-[60px] truncate sm:max-w-[80px] sm:text-sm">
           {teamName}
         </span>
       </div>

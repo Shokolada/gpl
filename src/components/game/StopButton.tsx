@@ -39,22 +39,29 @@ export default function StopButton({
     idle: {
       borderTop: "2px solid #e63333",
       borderLeft: "2px solid #e63333",
-      borderBottom: "2px solid #550000",
+      borderBottom: "3px solid #550000",
       borderRight: "2px solid #550000",
     },
     running: {
       borderTop: "2px solid #ff4444",
       borderLeft: "2px solid #ff4444",
-      borderBottom: "2px solid #770000",
+      borderBottom: "3px solid #770000",
       borderRight: "2px solid #770000",
     },
     disabled: {
       borderTop: "2px solid #2a2d35",
       borderLeft: "2px solid #2a2d35",
-      borderBottom: "2px solid #15181e",
+      borderBottom: "3px solid #15181e",
       borderRight: "2px solid #15181e",
     },
   }[state];
+
+  // Running state glow
+  const boxShadow = state === "running"
+    ? "0 0 16px rgba(204, 0, 0, 0.4), 0 0 32px rgba(204, 0, 0, 0.15)"
+    : state === "idle"
+      ? "0 4px 12px rgba(0, 0, 0, 0.3)"
+      : "none";
 
   return (
     <motion.button
@@ -72,19 +79,20 @@ export default function StopButton({
               borderRight: "2px solid #e63333",
             }
       }
-      whileHover={disabled ? undefined : { scale: 1.03 }}
+      whileHover={disabled ? undefined : { scale: 1.02 }}
       className={`
-        relative w-full min-h-[60px] rounded-xl
-        font-[family-name:var(--font-orbitron)] text-xl md:text-2xl font-extrabold
+        relative w-full min-h-[56px] sm:min-h-[64px] rounded-xl
+        font-[family-name:var(--font-orbitron)] text-xl sm:text-2xl font-extrabold
         uppercase tracking-[0.15em]
         select-none outline-none
         transition-all duration-200
         ${disabled ? "cursor-not-allowed" : "cursor-pointer"}
-        ${state === "running" ? "pulse-red" : ""}
+        ${state === "running" ? "animate-pulse-red" : ""}
       `}
       style={{
         background: gradientBg,
         color: textColor,
+        boxShadow,
         ...borderStyle,
       }}
     >
@@ -94,7 +102,7 @@ export default function StopButton({
           className="absolute inset-0 rounded-xl pointer-events-none"
           style={{
             background:
-              "linear-gradient(to bottom, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 50%, rgba(0,0,0,0.15) 100%)",
+              "linear-gradient(to bottom, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0) 50%, rgba(0,0,0,0.15) 100%)",
           }}
         />
       )}

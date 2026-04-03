@@ -75,7 +75,7 @@ function BombSVG({ isRunning }: { isRunning: boolean }) {
   return (
     <svg
       viewBox="0 0 200 200"
-      className="w-[110px] h-[110px] md:w-[140px] md:h-[140px]"
+      className="w-[80px] h-[80px] sm:w-[100px] sm:h-[100px] md:w-[130px] md:h-[130px]"
       style={{ position: "relative", zIndex: 2 }}
       aria-hidden="true"
     >
@@ -182,13 +182,13 @@ export default function BombStopwatch({ time, isRunning }: BombStopwatchProps) {
         }
       >
         {/* Bomb graphic — overlaps the top of the circular display */}
-        <div className="relative" style={{ marginBottom: "-50px", zIndex: 2 }}>
+        <div className="relative" style={{ marginBottom: "-38px", zIndex: 2 }}>
           <BombSVG isRunning={isRunning} />
         </div>
 
         {/* ---- Circular LED Display ---- */}
         <div
-          className="relative w-[280px] h-[280px] md:w-[360px] md:h-[360px]"
+          className="relative w-[200px] h-[200px] sm:w-[260px] sm:h-[260px] md:w-[340px] md:h-[340px]"
           style={{ zIndex: 1 }}
         >
           {/* Outer beveled metallic rim */}
@@ -204,14 +204,14 @@ export default function BombStopwatch({ time, isRunning }: BombStopwatchProps) {
           >
             {/* Second bevel ring for depth */}
             <div
-              className="absolute inset-[6px] md:inset-[8px] rounded-full"
+              className="absolute inset-[5px] sm:inset-[7px] md:inset-[8px] rounded-full"
               style={{
                 background: `linear-gradient(315deg, #4a4f5a 0%, #2a2d35 35%, #1e2128 65%, #15181e 100%)`,
               }}
             >
-              {/* Inner dark LED surface */}
+              {/* Inner dark LED surface with scanlines */}
               <div
-                className="absolute inset-[5px] md:inset-[6px] rounded-full flex flex-col items-center justify-center"
+                className="scanlines absolute inset-[4px] sm:inset-[5px] md:inset-[6px] rounded-full flex flex-col items-center justify-center"
                 style={{
                   backgroundColor: "#0a0c10",
                   boxShadow: `inset 0 2px 12px rgba(0,0,0,0.8), inset 0 -1px 6px rgba(0,0,0,0.4)`,
@@ -219,7 +219,7 @@ export default function BombStopwatch({ time, isRunning }: BombStopwatchProps) {
               >
                 {/* STOPWATCH label */}
                 <div
-                  className="text-[9px] md:text-[11px] tracking-[0.3em] uppercase mb-4 md:mb-5"
+                  className="text-[8px] sm:text-[9px] md:text-[11px] tracking-[0.3em] uppercase mb-3 sm:mb-4 md:mb-5"
                   style={{
                     color: "#6b7280",
                     fontFamily: "var(--font-orbitron, 'Orbitron'), 'JetBrains Mono', monospace",
@@ -233,7 +233,7 @@ export default function BombStopwatch({ time, isRunning }: BombStopwatchProps) {
                 <div className="relative">
                   {/* Ghost segments — simulates unlit LED segments */}
                   <div
-                    className="text-[44px] md:text-[58px] leading-none tabular-nums"
+                    className="text-[32px] sm:text-[40px] md:text-[56px] leading-none tabular-nums"
                     style={{
                       fontFamily:
                         "var(--font-jetbrains, 'JetBrains Mono'), 'Courier New', monospace",
@@ -250,7 +250,7 @@ export default function BombStopwatch({ time, isRunning }: BombStopwatchProps) {
 
                   {/* Active LED digits — always red */}
                   <div
-                    className="absolute inset-0 text-[44px] md:text-[58px] leading-none tabular-nums"
+                    className="absolute inset-0 text-[32px] sm:text-[40px] md:text-[56px] leading-none tabular-nums"
                     style={{
                       fontFamily:
                         "var(--font-jetbrains, 'JetBrains Mono'), 'Courier New', monospace",
@@ -272,7 +272,7 @@ export default function BombStopwatch({ time, isRunning }: BombStopwatchProps) {
 
                 {/* TARGET label */}
                 <div
-                  className="text-[9px] md:text-[11px] tracking-[0.2em] uppercase mt-4 md:mt-5"
+                  className="text-[8px] sm:text-[9px] md:text-[11px] tracking-[0.2em] uppercase mt-3 sm:mt-4 md:mt-5"
                   style={{
                     color: "#6b7280",
                     fontFamily: "var(--font-orbitron, 'Orbitron'), 'JetBrains Mono', monospace",
